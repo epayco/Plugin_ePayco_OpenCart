@@ -40,9 +40,12 @@ Luego de configurar los campos presione el botón **Save**. Y con esto quedara i
 
 ## Pasos
 
-<img src="ImgTutorialZenCart/tuto-1.jpg" width="400px"/>
-<img src="ImgTutorialZenCart/tuto-2.jpg" width="400px"/>
-<img src="ImgTutorialZenCart/tuto-3.jpg" width="400px"/>
+<img src="ImgTutorialOpenCart/tuto-1.jpg" width="400px"/>
+<img src="ImgTutorialOpenCart/tuto-2.jpg" width="400px"/>
+<img src="ImgTutorialOpenCart/tuto-3.jpg" width="400px"/>
+<img src="ImgTutorialOpenCart/tuto-4.jpg" width="400px"/>
 
 ## Versiones
-* [ePayco plugin ZenCart v1.5.1](https://github.com/epayco/Plugin_ePayco_ZenCart/releases/tag/1.5.1).
+* [ePayco plugin OpenCart v1.5.x](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/1.5.x).
+* [ePayco plugin OpenCart v2.1.x](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/2.1.x).
+* [ePayco plugin OpenCart v2.2.x](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/2.2.x).
