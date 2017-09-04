@@ -1,0 +1,43 @@
+<script>
+if(window.jQuery) {
+        var refreshId = setInterval(function() {
+        if (jQuery('iframe#checkout-epayco').length) {
+                console.log("Cargado el formulario");
+                //z-index overlay ePayco
+                jQuery("#overlay-epayco").css('z-index','1000');
+                clearInterval(refreshId);
+                //callform();
+          }else{
+            callform();
+          }
+        }, 1000);
+        function callform(){
+            jQuery('form#epaycoform button').trigger('click');    
+        }
+}else{
+
+    var refreshId = setInterval(function() {
+    if(document.getElementById('checkout-epayco')) {
+            console.log("Cargado el formulario con JS");
+            //z-index overlay ePayco
+            document.getElementById("overlay-epayco").style.zIndex = '1000';
+            clearInterval(refreshId);
+      }
+    }, 100); 
+}
+</script>
+<form id="epaycoform" class="text-center">
+            <script src="https://s3-us-west-2.amazonaws.com/epayco/v1.0/checkoutEpayco.js" 
+                class="epayco-button" 
+                data-epayco-key="{{ap_publickey}}" 
+                data-epayco-amount="{{ap_amount}}" 
+                data-epayco-name="{{ap_itemname}}" 
+                data-epayco-description="{{ap_itemname}}"
+                data-epayco-currency="{{ap_currency}}" 
+                data-epayco-country="{{ap_isocode}}" 
+                data-epayco-test="{{ap_test}}"
+                data-epayco-response="{{ap_returnurl}}"
+                data-epayco-extra1 = "{{ap_itemcode}}" 
+                data-epayco-confirmation="{{ap_confirmation}}" >
+            </script>
+        </form>
