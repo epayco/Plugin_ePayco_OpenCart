@@ -50,4 +50,5 @@ Luego de configurar los campos presione el botón **Save**. Y con esto quedara i
 * [ePayco plugin OpenCart v2.1.x](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/2.1.x).
 * [ePayco plugin OpenCart v2.2.x](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/2.2.x).
 * [ePayco plugin OpenCart v2.3.0.3](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/2.3.0.3).
+* [ePayco plugin OpenCart > v3.0](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/3.0).
 
