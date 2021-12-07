@@ -1,0 +1,208 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-payco" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1><img src="https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/logos/logo_epayco_200px.png" alt="ePayco" /> </h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+        {% endfor %}
+      </ul>
+      <div style="color: #31708f; background-color: #d9edf7; border-color: #bce8f1;padding: 10px;border-radius: 5px;">{{ text_info }}
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-payco" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10" style="margin-top: 10px;">
+              <!-- <select name="payment_payco_status" id="input-status" class="form-control">
+                {% if payment_payco_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select> -->
+              <label for="payment_payco_status">
+                <input class="" style="margin-right: 10px;" type="checkbox" name="payment_payco_status" id="payment_payco_status" value="1" {% if payment_payco_status == 1 %} checked="true" {% endif %}>{{ entry_status_description }}
+              </label>
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-title">{{ entry_title }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="payment_payco_title" value="{{ payment_payco_title }}" placeholder="{{ entry_title|slice(0, -1) }}" id="input-title" class="form-control" />
+              <p style="margin: 2px 5px;color: #afaeae;">{{ entry_title_description }}</p>
+              {% if error_title %}
+              <div class="text-danger">{{ error_title }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-description">{{ entry_description }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="payment_payco_description" value="{{ payment_payco_description }}" placeholder="{{ entry_description|slice(0, -1) }}" id="input-description" class="form-control" />
+              <p style="margin: 2px 5px;color: #afaeae;">{{ entry_description_description }}</p>
+              {% if error_description %}
+              <div class="text-danger">{{ error_description }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-merchant">{{ entry_merchant }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="payment_payco_merchant" value="{{ payment_payco_merchant }}" placeholder="{{ entry_merchant|slice( 0, -1) }}" id="input-merchant" class="form-control" />
+              <p style="margin: 2px 5px;color: #afaeae;">{{ entry_merchant_description }}</p>
+              {% if error_merchant %}
+              <div class="text-danger">{{ error_merchant }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-key">{{ entry_key }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="payment_payco_key" value="{{ payment_payco_key }}" placeholder="{{ entry_key|slice( 0, -1) }}" id="input-key" class="form-control" />
+              <p style="margin: 2px 5px;color: #afaeae;">{{ entry_key_description }}</p>
+              {% if error_key %}
+              <div class="text-danger">{{ error_key }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-public_key">{{ entry_public_key }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="payment_payco_public_key" value="{{ payment_payco_public_key }}" placeholder="{{ entry_public_key|slice( 0, -1) }}" id="input-public_key" class="form-control" />
+              <p style="margin: 2px 5px;color: #afaeae;">{{ entry_public_key_description }}</p>
+              {% if error_public_key %}
+              <div class="text-danger">{{ error_public_key }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-callback">{{ entry_callback }}</label>
+            <div class="col-sm-10">
+              <input placeholder="{{ entry_callback|slice( 0, -1) }}" name="payment_payco_callback" id="input-callback" class="form-control" value="{{ payment_payco_callback }}"/>
+              <p style="margin: 2px 5px;color: #afaeae;">{{ entry_callback_description }}</p>
+              {% if error_callback %}
+              <div class="text-danger">{{ error_callback }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-confirmation">{{ entry_confirmation }}</label>
+            <div class="col-sm-10">
+              <input placeholder="{{ entry_confirmation|slice( 0, -1) }}" name="payment_payco_confirmation" id="input-confirmation" class="form-control" value="{{ payment_payco_confirmation }}"/>
+              <p style="margin: 2px 5px;color: #afaeae;">{{ entry_confirmation_description }}</p>
+              {% if error_confirmation %}
+              <div class="text-danger">{{ error_confirmation }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_test }}</label>
+            <div class="col-sm-10">
+              <label class="radio-inline">
+                {% if payment_payco_test %}
+                <input type="radio" name="payment_payco_test" value="1" checked="checked" />
+                {{ text_yes }}
+                {% else %}
+                <input type="radio" name="payment_payco_test" value="1" />
+                {{ text_yes }}
+                {% endif %}
+              </label>
+              <label class="radio-inline">
+                {% if  not payment_payco_test %}
+                <input type="radio" name="payment_payco_test" value="0" checked="checked" />
+                {{ text_no }}
+                {% else %}
+                <input type="radio" name="payment_payco_test" value="0" />
+                {{ text_no }}
+                {% endif %}
+              </label>
+              <p style="margin: 5px 5px;color: #afaeae;">{{ entry_test_description }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-checkout-type">{{ entry_checkout_type }}</label>
+            <div class="col-sm-10">
+              <select name="payment_payco_checkout_type" id="input-checkout-type" class="form-control">
+                <option value="false" {% if payment_payco_checkout_type == 'false' %} selected="true" {% endif %}>Onpage Checkout</option>
+                <option value="true" {% if  payment_payco_checkout_type == 'true' %} selected="true" {% endif %}>Standard Checkout</option> 
+                <!--<option value="true" selected="true">Standard Checkout</option>-->
+              </select>
+              <p style="margin: 5px 5px;color: #afaeae;">{{ entry_checkout_type_description }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-initial-order-status">{{ entry_initial_order_status }}</label>
+            <div class="col-sm-10">
+              <select name="payment_payco_initial_order_status_id" id="input-initial-order-status" class="form-control">
+                {% for order_status in order_statuses %}
+                {% if order_status['order_status_id'] == payment_payco_initial_order_status_id %}
+                <option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+                {% else %}
+                <option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+                {% endif %}
+                {% endfor %}
+              </select>
+              <p style="margin: 5px 5px;color: #afaeae;">{{ entry_initial_order_status_description }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-final-order-status">{{ entry_final_order_status }}</label>
+            <div class="col-sm-10">
+              <select name="payment_payco_final_order_status_id" id="input-final-order-status" class="form-control">
+                {% for order_status in order_statuses %}
+                {% if order_status['order_status_id'] == payment_payco_final_order_status_id %}
+                <option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+                {% else %}
+                <option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+                {% endif %}
+                {% endfor %}
+              </select>
+              <p style="margin: 5px 5px;color: #afaeae;">{{ entry_final_order_status_description }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-geo-zone">{{ entry_geo_zone }}</label>
+            <div class="col-sm-10">
+              <select name="payment_payco_geo_zone_id" id="input-geo-zone" class="form-control">
+                <option value="0">{{ text_all_zones }}</option>
+                {% for geo_zone in geo_zones %}
+                {% if geo_zone['geo_zone_id'] == payment_payco_geo_zone_id %}
+                <option value="{{ geo_zone['geo_zone_id'] }}" selected="selected">{{ geo_zone['name'] }}</option>
+                {% else %}
+                <option value="{{ geo_zone['geo_zone_id'] }}">{{ geo_zone['name'] }}</option>
+                {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="payment_payco_sort_order" value="{{ payment_payco_sort_order }}" placeholder="{{ entry_sort_order|slice( 0, -1) }}" id="input-sort-order" class="form-control" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}
