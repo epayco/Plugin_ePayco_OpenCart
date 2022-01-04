@@ -2,20 +2,39 @@
 class ControllerExtensionPaymentPayco extends Controller {
 	public function index() {
 		$this->load->language('extension/payment/payco');
-
 		$data['button_confirm'] = $this->language->get('button_confirm');
-
 		$this->load->model('checkout/order');
-
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$data['action']='https://secure.payco.co/payment.php';
 		$data['p_cust_id_cliente'] = $this->config->get('payment_payco_merchant');
-		//$data['p_id_factura'] = $this->session->data['order_id'];
 		$data['p_timestamp'] = time();
 		$data['p_amount'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
-		//$data['x_fp_hash'] = null; // calculated later, once all fields are populated
-		$data['p_tax'] = 0;
-		$data['p_amount_base']=0;
+		$queryOrderEpayco = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_total WHERE order_id = '" . (int)$order_info['order_id'] . "'");
+		if(count($queryOrderEpayco->row)>0){
+		    $queryOrder = $queryOrderEpayco;
+		}else{
+			$queryOrder = null;
+		}
+        $p_tax=0;
+        $p_amount_ = 0; 
+		foreach ($queryOrder->rows as $orderData){
+		    if($orderData['code'] == "tax"){
+		       $p_tax +=  floatval($orderData['value']);
+		    }
+		    
+		    if($orderData['code'] == "total"){
+		       $p_amount_ +=  floatval($orderData['value']);
+		    }
+		}
+		$p_amount_base = $p_amount_ - $p_tax;
+		$data['p_tax'] = $p_tax;
+		$data['p_amount_base']=$p_amount_base;
+		if((int) $this->config->get('payment_payco_language') == 0){
+		    $lang = "en";
+		}else{
+		    $lang = "es";
+		}
+		$data['p_lang'] = $lang;
 		$data['p_show_form'] = 'PAYMENT_FORM';
 		$data['p_test_request'] = $this->config->get('payco_test');
 		$data['p_type'] = 'AUTH_CAPTURE';
@@ -38,13 +57,12 @@ class ControllerExtensionPaymentPayco extends Controller {
 		$data['p_shiping_city'] = html_entity_decode($order_info['shipping_city'], ENT_QUOTES, 'UTF-8');
 		$data['p_shiping_state'] = html_entity_decode($order_info['shipping_zone'], ENT_QUOTES, 'UTF-8');
 		$data['p_shiping_zip'] = html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8');
-		$data['p_shiping_country'] = html_entity_decode($order_info['shipping_country'], ENT_QUOTES, 'UTF-8');
+		$data['p_shiping_country'] = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8');
 		$data['p_customer_ip'] = $this->request->server['REMOTE_ADDR'];
 		$data['p_email'] = $order_info['email'];
 		$data['p_extra1'] = 'OpenCart V 3.0.2';
 		$data['p_url_response'] =$this->config->get('payment_payco_callback');
 		$data['p_url_confirmation'] =$this->config->get('payment_payco_confirmation');
-
 		$data['p_public_key'] = $this->config->get('payment_payco_public_key');
 		$data['p_itemname']="";
 		foreach ($this->cart->getProducts() as $product) {
@@ -76,28 +94,29 @@ class ControllerExtensionPaymentPayco extends Controller {
 
 	public function callback() 
 	{
-		
-
 		if(isset($_GET['ref_payco']) || isset($_GET['?ref_payco'])){
 			if(isset($_GET['?ref_payco'])){
 				$_GET['ref_payco']=$_GET['?ref_payco'];
 			}
-
+            if(isset($_GET['ref_payco'])){
+                	$confirmation=true;
+            }
 			$url="https://secure.epayco.co/validation/v1/reference/".$_GET['ref_payco'];
 			$response=json_decode(file_get_contents($url));
-			$_REQUEST=(array)$response->data;
-			
+			$_REQUEST=(array)$response->data;		
 		}
 
 		if (isset($_REQUEST['x_id_invoice'])) {
 			$order_id = $_REQUEST['x_extra1'];
 		} else {
-			$order_id = 0;
+		    $this->load->model('checkout/order');
+		    $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+			$order_id = $order_info['order_id'];
 		}
 		if (isset($_REQUEST['x_ref_payco'])) {
 			$this->load->model('checkout/order');
 			$p_cust_id_cliente=$this->config->get('payment_payco_merchant');
-             $p_key=$this->config->get('payment_payco_key');
+            $p_key=$this->config->get('payment_payco_key');
 
                 $x_ref_payco=$_REQUEST['x_ref_payco'];
                 $x_transaction_id=$_REQUEST['x_transaction_id'];
@@ -106,6 +125,9 @@ class ControllerExtensionPaymentPayco extends Controller {
                 $x_signature=$_REQUEST['x_signature'];
 				$x_cod_response=$_REQUEST['x_cod_response'];
 				$isTest=$_REQUEST['x_test_request'];
+				$x_test_request = $_REQUEST['x_test_request'];
+				$x_approval_code = $_REQUEST['x_approval_code'];
+				$x_cod_transaction_state = $_REQUEST['x_cod_transaction_state '];
 				if($isTest == "TRUE"){
 					$isTest_= 1;
 				}else{
@@ -126,11 +148,36 @@ class ControllerExtensionPaymentPayco extends Controller {
 				}else{
 					$queryProduct_ = null;
 				}
-
-
+                if ((int) $this->config->get('payment_payco_test') == 1) {
+                	$isTestPluginMode = 'yes';
+                } else {
+                	$isTestPluginMode = 'no';
+                }
+                $order_info = $this->model_checkout_order->getOrder($order_id);
+                $data_p_amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
+                $isTestMode = $x_test_request == "TRUE" ? "true" : "false";
+                if(floatval($data_p_amount) == floatval($x_amount)){
+                    if("yes" == $isTestPluginMode){
+                        $validation = true;
+                    }
+                    if("no" == $isTestPluginMode ){
+                        if($x_approval_code != "000000" && $x_cod_transaction_state == 1){
+                            $validation = true;
+                        }else{
+                            if($x_cod_transaction_state != 1){
+                                $validation = true;
+                            }else{
+                                $validation = false;
+                            }
+                        }
+                        
+                    }
+                }else{
+                     $validation = false;
+                }
 				//Validamos la firma
-                if($x_signature==$signature){
-               
+                if($x_signature==$signature && $validation){
+            
                 switch ((int)$x_cod_response) {
                     case 1:{
 						$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Complete test'");
@@ -243,9 +290,11 @@ class ControllerExtensionPaymentPayco extends Controller {
 					 } break;           
                     
                 }
-
                 if($x_cod_response==1 || $x_cod_response==3){
 					if (isset($_REQUEST['x_ref_payco'])) {
+					    if($confirmation == "true"){
+                            $this->response->redirect($this->url->link('checkout/success'));
+                        }
 						die($x_cod_response);
 					}else{
 						$this->response->redirect($this->url->link('checkout/success'));
@@ -259,7 +308,26 @@ class ControllerExtensionPaymentPayco extends Controller {
                 }                	
 
 		}else{
-			echo "no hay  request";
+			if($queryProduct_){
+				if($queryOrderEpayco->row["discount"] == "1"){
+					$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
+					$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
+					$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+							
+					$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
+								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
+				}
+			}
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
+			if($isTest_== 1){
+				if(count($query->row)>0){
+					$orderStatus = $query->row["order_status_id"];
+				}
+			}else{
+				$orderStatus = 7;
+			}
+            $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
+            $this->response->redirect($this->url->link('checkout/failure'));
 		}
 	}
 

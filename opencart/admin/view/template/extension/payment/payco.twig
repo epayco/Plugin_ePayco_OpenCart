@@ -5,7 +5,7 @@
       <div class="pull-right">
         <button type="submit" form="form-payco" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
         <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
-      <h1><img src="https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/logos/logo_epayco_200px.png" alt="ePayco" /> </h1>
+      <h1><img src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logo-fondo-oscuro-lite.png" alt="ePayco" /> </h1>
       <ul class="breadcrumb">
         {% for breadcrumb in breadcrumbs %}
         <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
@@ -136,6 +136,30 @@
                 {% endif %}
               </label>
               <p style="margin: 5px 5px;color: #afaeae;">{{ entry_test_description }}</p>
+            </div>
+          </div>
+           <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_languaje }}</label>
+            <div class="col-sm-10">
+              <label class="radio-inline">
+                {% if payment_payco_language %}
+                <input type="radio" name="payment_payco_language" value="1" checked="checked" />
+                {{ text_es }}
+                {% else %}
+                <input type="radio" name="payment_payco_language" value="1" />
+                {{ text_es }}
+                {% endif %}
+              </label>
+              <label class="radio-inline">
+                {% if  not payment_payco_language %}
+                <input type="radio" name="payment_payco_language" value="0" checked="checked" />
+                {{ text_en }}
+                {% else %}
+                <input type="radio" name="payment_payco_language" value="0" />
+                {{ text_en }}
+                {% endif %}
+              </label>
+              <p style="margin: 5px 5px;color: #afaeae;">{{ entry_languaje_description }}</p>
             </div>
           </div>
           <div class="form-group">
