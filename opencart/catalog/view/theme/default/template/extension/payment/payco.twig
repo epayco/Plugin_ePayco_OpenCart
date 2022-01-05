@@ -27,15 +27,30 @@
         data-epayco-confirmation="{{ p_url_confirmation }}"
         data-extra1="{{ p_extra1 }}">
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+	window.onload = function() {
+	    document.addEventListener("contextmenu", function(e){
+		e.preventDefault();
+	    }, false);
+	} 
+      $(document).keydown(function (event) {
+         if (event.keyCode == 123) {
+             	return false;
+         } else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {        
+              	return false;
+         }
+       });
+    </script>
 </form>
 
 <script>
   $("#button_confirm").on( "click", function(e) {
     e.preventDefault();
-          var handler = ePayco.checkout.configure({
-  				      key: "{{ p_public_key }}",
-  				      test: "{{ p_test_mode }}"
-  			      });
+    var handler = ePayco.checkout.configure({
+  		key: "{{ p_public_key }}",
+  		test: "{{ p_test_mode }}"
+  	});
             var data={
                 name: "{{ p_itemname }}",
                 description: "{{ p_itemname }}",
@@ -44,8 +59,8 @@
                 amount: "{{ p_amount }}",
                 tax_base: "{{ p_amount_base }}",
                 tax: "{{ p_tax }}",
-                country: "co",
-                lang: "en",
+                country: "{{ p_shiping_country }}",
+                lang: "{{ p_lang }}",
                 external: "{{ p_payco_checkout_type }}",
                 extra1: "{{ p_id_invoice }}",
                 confirmation: "{{ p_url_confirmation }}",
@@ -55,25 +70,24 @@
                 mobilephone_billing: "{{ p_billing_phone }}"
               }  
 
-    	$.ajax({
-        url: 'index.php?route=extension/payment/payco/confirm',
-        dataType: 'json',
-        beforeSend: function() {
-          $('#button-confirm').button('loading');
-        },
-        complete: function() {
-          handler.open(data)
-          $('#button-confirm').button('reset');
-        },
-        success: function(json) {
-           $('#button-confirm').button('loading');
-        },
-        error: function(xhr, ajaxOptions, thrownError) {
-          console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-        }
-	  });
-    //$( ".epayco-button-render" ).trigger( "click" );
+    $.ajax({
+		  url: 'index.php?route=extension/payment/payco/confirm',
+		  dataType: 'json',
+		  beforeSend: function() {
+		    $('#button-confirm').button('loading');
+		  },
+		complete: function() {
+		  handler.open(data)
+		  $('#button-confirm').button('reset');
+		},
+		success: function(json) {
+		   $('#button-confirm').button('loading');
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+		  console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		  alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
 
   });
 
