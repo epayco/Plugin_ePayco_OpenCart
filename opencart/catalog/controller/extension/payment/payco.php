@@ -101,7 +101,7 @@ class ControllerExtensionPaymentPayco extends Controller {
             if(isset($_GET['ref_payco'])){
                 	$confirmation=true;
             }
-			$url="https://secure.epayco.co/validation/v1/reference/".$_GET['ref_payco'];
+			$url="https://secure.epayco.io/validation/v1/reference/".$_GET['ref_payco'];
 			$response=json_decode(file_get_contents($url));
 			$_REQUEST=(array)$response->data;		
 		}
@@ -176,7 +176,7 @@ class ControllerExtensionPaymentPayco extends Controller {
                      $validation = false;
                 }
 				//Validamos la firma
-                if($x_signature==$signature && $validation){
+            if($x_signature==$signature && $validation){
             
                 switch ((int)$x_cod_response) {
                     case 1:{
@@ -201,7 +201,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
 							}
 						}
-						$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
+                        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
 						if($isTest_== 1){
 							if(count($query->row)>0){
 								$orderStatus = $query->row["order_status_id"];
@@ -243,8 +243,8 @@ class ControllerExtensionPaymentPayco extends Controller {
 							$orderStatus = 7;
 						}
                         $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-					 } break; 
-					 case 10:{
+					} break; 
+					case 10:{
 						if($queryProduct_){
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
@@ -265,8 +265,8 @@ class ControllerExtensionPaymentPayco extends Controller {
 							$orderStatus = 7;
 						}
                         $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-					 } break;  
-					 case 11:{
+					} break;  
+					case 11:{
 						if($queryProduct_){
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
@@ -287,48 +287,65 @@ class ControllerExtensionPaymentPayco extends Controller {
 							$orderStatus = 7;
 						}
                         $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-					 } break;           
+					} break;           
                     
                 }
-                if($x_cod_response==1 || $x_cod_response==3){
-					if (isset($_REQUEST['x_ref_payco'])) {
-					    if($confirmation == "true"){
-                            $this->response->redirect($this->url->link('checkout/success'));
-                        }
-						die($x_cod_response);
+					if($x_cod_response==1 || $x_cod_response==3){
+						if (isset($_REQUEST['x_ref_payco'])) {
+							if($confirmation == "true"){
+								$this->response->redirect($this->url->link('checkout/success'));
+							}
+							die($x_cod_response);
+						}else{
+							$this->response->redirect($this->url->link('checkout/success'));
+						}
 					}else{
-						$this->response->redirect($this->url->link('checkout/success'));
+						$this->response->redirect($this->url->link('checkout/failure'));
 					}
-                }else{
-                	$this->response->redirect($this->url->link('checkout/failure'));
-                }
 
-                }else{
-                    die("Firma no valida");
-                }                	
-
-		}else{
-			if($queryProduct_){
-				if($queryOrderEpayco->row["discount"] == "1"){
+			}else{
+				if($queryProduct_){
+					if($queryOrderEpayco->row["discount"] == "1"){
 					$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 					$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
 					$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-							
 					$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
-								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
+						"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
+					}
 				}
-			}
-			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
-			if($isTest_== 1){
-				if(count($query->row)>0){
-					$orderStatus = $query->row["order_status_id"];
+				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
+				if($isTest_== 1){
+					if(count($query->row)>0){
+						$orderStatus = $query->row["order_status_id"];
+					}
+				}else{
+					$orderStatus = 7;
 				}
-			}else{
-				$orderStatus = 7;
+				$this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
+			} 	               	
+
+		}else{
+				if($queryProduct_){
+					if($queryOrderEpayco->row["discount"] == "1"){
+						$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
+						$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
+						$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+								
+						$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
+									"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
+					}
+				}
+				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
+				if($isTest_== 1){
+					if(count($query->row)>0){
+						$orderStatus = $query->row["order_status_id"];
+					}
+				}else{
+					$orderStatus = 7;
+				}
+				$this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
+				$this->response->redirect($this->url->link('checkout/failure'));
 			}
-            $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-            $this->response->redirect($this->url->link('checkout/failure'));
-		}
 	}
 
 
