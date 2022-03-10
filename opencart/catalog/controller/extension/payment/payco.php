@@ -34,6 +34,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 		}else{
 		    $lang = "es";
 		}
+		$countryCode = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8')?html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8'): "CO";
 		$data['p_lang'] = $lang;
 		$data['p_show_form'] = 'PAYMENT_FORM';
 		$data['p_test_request'] = $this->config->get('payco_test');
@@ -57,7 +58,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 		$data['p_shiping_city'] = html_entity_decode($order_info['shipping_city'], ENT_QUOTES, 'UTF-8');
 		$data['p_shiping_state'] = html_entity_decode($order_info['shipping_zone'], ENT_QUOTES, 'UTF-8');
 		$data['p_shiping_zip'] = html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8');
-		$data['p_shiping_country'] = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8');
+		$data['p_shiping_country'] = $countryCode;
 		$data['p_customer_ip'] = $this->request->server['REMOTE_ADDR'];
 		$data['p_email'] = $order_info['email'];
 		$data['p_extra1'] = 'OpenCart V 3.0.2';

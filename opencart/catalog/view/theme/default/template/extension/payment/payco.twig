@@ -74,14 +74,14 @@
 		  url: 'index.php?route=extension/payment/payco/confirm',
 		  dataType: 'json',
 		  beforeSend: function() {
-		    $('#button-confirm').button('loading');
+		    $('#button-confirm').click('loading');
 		  },
 		complete: function() {
 		  handler.open(data)
-		  $('#button-confirm').button('reset');
+		  $('#button-confirm').click('reset');
 		},
 		success: function(json) {
-		   $('#button-confirm').button('loading');
+		   $('#button-confirm').click('loading');
 		},
 		error: function(xhr, ajaxOptions, thrownError) {
 		  console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
