@@ -1,97 +1,43 @@
-<div class="buttons">
-  <div class="pull-right">
-    <input id="button_confirm" type="submit" disabled="true" value="{{ button_confirm }}" class="btn btn-primary" />
-  </div>
-</div>
-
-<form id="epayco_form" style="display: none;">
-    <script
-        src="https://checkout.epayco.co/checkout.js"
-        class="epayco-button"
-        data-epayco-key="{{ p_public_key }}"
-        data-epayco-invoice ="{{ p_id_invoice }}"
-        data-epayco-amount="{{ p_amount }}"
-        data-epayco-tax="{{ p_tax }}"
-        data-epayco-tax-base="{{ p_amount_base }}"
-        data-epayco-name="{{ p_itemname}}"
-        data-epayco-description="{{ p_description }}"
-        data-epayco-currency="{{ p_currency_code }}"
-        data-epayco-country="co"
-        data-epayco-name-billing="{{ p_billing_first_name ~' '~ p_billing_last_name }}"
-        data-epayco-address-billing="{{ p_billing_address }}"
-        data-epayco-email-billing="{{ p_email }}"
-        data-epayco-mobilephone-billing="{{ p_billing_phone }}"
-        data-epayco-test="{{ p_test_mode }}"
-        data-epayco-external="{{ p_payco_checkout_type }}"
-        data-epayco-response="{{ p_url_response }}"
-        data-epayco-confirmation="{{ p_url_confirmation }}"
-        data-extra1="{{ p_extra1 }}">
-    </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-	window.onload = function() {
-	    document.addEventListener("contextmenu", function(e){
-		e.preventDefault();
-	    }, false);
-	} 
-      $(document).keydown(function (event) {
-         if (event.keyCode == 123) {
-             	return false;
-         } else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {        
-              	return false;
-         }
-       });
-    </script>
-</form>
-
 <script>
-  $("#button_confirm").on( "click", function(e) {
-    e.preventDefault();
-    var handler = ePayco.checkout.configure({
-  		key: "{{ p_public_key }}",
-  		test: "{{ p_test_mode }}"
-  	});
-            var data={
-                name: "{{ p_itemname }}",
-                description: "{{ p_itemname }}",
-                invoice: "{{ p_id_invoice }}",
-                currency: "{{ p_currency_code }}",
-                amount: "{{ p_amount }}",
-                tax_base: "{{ p_amount_base }}",
-                tax: "{{ p_tax }}",
-                country: "{{ p_shiping_country }}",
-                lang: "{{ p_lang }}",
-                external: "{{ p_payco_checkout_type }}",
-                extra1: "{{ p_id_invoice }}",
-                confirmation: "{{ p_url_confirmation }}",
-                response: "{{ p_url_response }}",
-                name_billing: "{{ p_billing_first_name ~' '~ p_billing_last_name }}",
-                address_billing: "{{ p_billing_address }}",
-                mobilephone_billing: "{{ p_billing_phone }}"
-              }  
+if(window.jQuery) {
+        var refreshId = setInterval(function() {
+        if (jQuery('iframe#checkout-epayco').length) {
+                console.log("Cargado el formulario");
+                //z-index overlay ePayco
+                jQuery("#overlay-epayco").css('z-index','1000');
+                clearInterval(refreshId);
+                //callform();
+          }else{
+            callform();
+          }
+        }, 1000);
+        function callform(){
+            jQuery('form#epaycoform button').trigger('click');    
+        }
+}else{
 
-    $.ajax({
-		  url: 'index.php?route=extension/payment/payco/confirm',
-		  dataType: 'json',
-		  beforeSend: function() {
-		    $('#button-confirm').click('loading');
-		  },
-		complete: function() {
-		  handler.open(data)
-		  $('#button-confirm').click('reset');
-		},
-		success: function(json) {
-		   $('#button-confirm').click('loading');
-		},
-		error: function(xhr, ajaxOptions, thrownError) {
-		  console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-		  alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-		}
-	});
-
-  });
-
-  document.getElementById("epayco_form").addEventListener("DOMNodeInserted", function (event) {
-    document.getElementById("button_confirm").removeAttribute("disabled");
-  }, false);
+    var refreshId = setInterval(function() {
+    if(document.getElementById('checkout-epayco')) {
+            console.log("Cargado el formulario con JS");
+            //z-index overlay ePayco
+            document.getElementById("overlay-epayco").style.zIndex = '1000';
+            clearInterval(refreshId);
+      }
+    }, 100); 
+}
 </script>
+<form id="epaycoform" class="text-center">
+            <script src="https://checkout.epayco.co/checkout.js" 
+                class="epayco-button" 
+                data-epayco-key="{{ap_publickey}}" 
+                data-epayco-amount="{{ap_amount}}" 
+                data-epayco-name="{{ap_itemname}}" 
+                data-epayco-description="{{ap_itemname}}"
+                data-epayco-currency="{{ap_currency}}" 
+                data-epayco-country="{{ap_isocode}}" 
+                data-epayco-test="{{ap_test}}"
+                data-epayco-response="{{ap_returnurl}}"
+                data-epayco-extra1 = "{{ap_itemcode}}" 
+                data-epayco-confirmation="{{ap_confirmation}}" >
+            </script>
+        </form>

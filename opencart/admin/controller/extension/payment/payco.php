@@ -11,87 +11,43 @@ class ControllerExtensionPaymentPayco extends Controller {
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->model_setting_setting->editSetting('payment_payco', $this->request->post);
+
 			$this->session->data['success'] = $this->language->get('text_success');
+
 			$this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
+
 		}
-
-
-
-		$this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "epayco_order` (
-            `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-            `order_id` INT(11),
-            `is_test` INT(11) NOT NULL DEFAULT '0',
-            `discount` TINYINT(1) NOT NULL DEFAULT '0',
-            PRIMARY KEY (`id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
-		
-		$this->load->model('localisation/order_status');
-		$epaycoOrderStatus = [
-            "Complete test",
-            "Canceled test",
-            "Processing test",
-            "Failed test",
-            "Pending test"
-        ];
-		$queryw = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Pending'");
-        foreach ( $epaycoOrderStatus as $status){
-			$this->db->query("INSERT INTO " . DB_PREFIX . "order_status (name, language_id)  SELECT * FROM (SELECT '" . $this->db->escape($status) . "','" . (int)$queryw->row["order_status_id"] . "') AS tmp
-			WHERE NOT EXISTS (
-				SELECT name FROM " . DB_PREFIX . "order_status  WHERE name = '" . $this->db->escape($status) . "'
-			) LIMIT 1;  
-			");
-        }
 
 		$data['heading_title'] = $this->language->get('heading_title');
 
 		$data['text_edit'] = $this->language->get('text_edit');
-		$data['text_info'] = $this->language->get('text_info');
-
 		$data['text_enabled'] = $this->language->get('text_enabled');
 		$data['text_disabled'] = $this->language->get('text_disabled');
+		$data['text_true'] = $this->language->get('text_true');
+		$data['text_false'] = $this->language->get('text_false');
 		$data['text_all_zones'] = $this->language->get('text_all_zones');
-		$data['text_yes'] = $this->language->get('text_yes');
-		$data['text_no'] = $this->language->get('text_no');
-		$data['text_es'] = $this->language->get('text_es');
-		$data['text_en'] = $this->language->get('text_en');
 
-		$data['entry_title'] = $this->language->get('entry_title');
-		$data['entry_title_description'] = $this->language->get('entry_title_description');
-		$data['entry_description'] = $this->language->get('entry_description');
-		$data['entry_description_description'] = $this->language->get('entry_description_description');
-		$data['entry_merchant'] = $this->language->get('entry_merchant');
-		$data['entry_merchant_description'] = $this->language->get('entry_merchant_description');
+		$data['entry_idcliente'] = $this->language->get('entry_idcliente');
 		$data['entry_key'] = $this->language->get('entry_key');
-		$data['entry_key_description'] = $this->language->get('entry_key_description');
-		$data['entry_public_key'] = $this->language->get('entry_public_key');
-		$data['entry_public_key_description'] = $this->language->get('entry_public_key_description');
-		$data['entry_checkout_type'] = $this->language->get('entry_checkout_type');
-		$data['entry_checkout_type_description'] = $this->language->get('entry_checkout_type_description');
-		$data['entry_callback'] = $this->language->get('entry_callback');
-		$data['entry_callback_description'] = $this->language->get('entry_callback_description');
-		$data['entry_confirmation'] = $this->language->get('entry_confirmation');
-		$data['entry_confirmation_description'] = $this->language->get('entry_confirmation_description');
-		
-		$data['entry_test'] = $this->language->get('entry_test');
-		$data['entry_test_description'] = $this->language->get('entry_test_description');
-		$data['entry_languaje'] = $this->language->get('entry_languaje');
-		$data['entry_languaje_description'] = $this->language->get('entry_languaje_description');
-		$data['entry_initial_order_status'] = $this->language->get('entry_initial_order_status');
-		$data['entry_initial_order_status_description'] = $this->language->get('entry_initial_order_status_description');
-		$data['entry_final_order_status'] = $this->language->get('entry_final_order_status');
-		$data['entry_final_order_status_description'] = $this->language->get('entry_final_order_status_description');
-		
+		$data['entry_publickey'] = $this->language->get('entry_publickey');
+		$data['entry_total'] = $this->language->get('entry_total');
+		$data['entry_order_status'] = $this->language->get('entry_order_status');
+		$data['entry_pending_status'] = $this->language->get('entry_pending_status');
+		$data['entry_accepted_status'] = $this->language->get('entry_accepted_status');
+		$data['entry_rejected_status'] = $this->language->get('entry_rejected_status');
+		$data['entry_failed_status'] = $this->language->get('entry_failed_status');
 		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
 		$data['entry_status'] = $this->language->get('entry_status');
-		$data['entry_status_description'] = $this->language->get('entry_status_description');
+		$data['entry_teststatus'] = $this->language->get('entry_teststatus');
 		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
-
-		$data['help_callback'] = $this->language->get('help_callback');
+		$data['help_idcliente'] = $this->language->get('help_idcliente');
+		$data['help_key'] = $this->language->get('help_key');
+		$data['help_publickey'] = $this->language->get('help_publickey');
+		$data['help_teststatus'] = $this->language->get('help_teststatus');
+		$data['help_total'] = $this->language->get('help_total');
 
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
-
-		$data['tab_general'] = $this->language->get('tab_general');
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -99,10 +55,10 @@ class ControllerExtensionPaymentPayco extends Controller {
 			$data['error_warning'] = '';
 		}
 
-		if (isset($this->error['merchant'])) {
-			$data['error_merchant'] = $this->error['merchant'];
+		if (isset($this->error['idcliente'])) {
+			$data['error_idcliente'] = $this->error['idcliente'];
 		} else {
-			$data['error_merchant'] = '';
+			$data['error_idcliente'] = '';
 		}
 
 		if (isset($this->error['key'])) {
@@ -111,51 +67,11 @@ class ControllerExtensionPaymentPayco extends Controller {
 			$data['error_key'] = '';
 		}
 
-		if (isset($this->error['public_key'])) {
-			$data['error_public_key'] = $this->error['public_key'];
+		if (isset($this->error['publickey'])) {
+			$data['error_publickey'] = $this->error['publickey'];
 		} else {
-			$data['error_public_key'] = '';
+			$data['error_publickey'] = '';
 		}
-
-		if (isset($this->error['title'])) {
-			$data['error_title'] = $this->error['title'];
-		} else {
-			$data['error_title'] = '';
-		}
-
-		if (isset($this->error['description'])) {
-			$data['error_description'] = $this->error['description'];
-		} else {
-			$data['error_description'] = '';
-		}
-
-		if (isset($this->error['callback'])) {
-			$data['error_callback'] = $this->error['callback'];
-		} else {
-			$data['error_callback'] = '';
-		}
-
-		if (isset($this->error['confirmation'])) {
-			$data['error_confirmation'] = $this->error['confirmation'];
-		} else {
-			$data['error_confirmation'] = '';
-		}
-
-		if ($this->config->get('payment_payco_callback')  === null) {
-			$this->request->post['payment_payco_callback'] = HTTP_CATALOG . 'index.php?route=extension/payment/payco/callback&'; //permitir success
-		}
-
-		if ($this->config->get('payment_payco_confirmation') === null) {
-			$this->request->post['payment_payco_confirmation'] = HTTP_CATALOG . 'index.php?route=extension/payment/payco/callback';
-		} 
-
-		if ($this->config->get('payment_payco_initial_order_status_id')  === null) {
-			$this->request->post['payment_payco_initial_order_status_id'] = 1;
-		}
-
-		if ($this->config->get('payment_payco_final_order_status_id') === null) {
-			$this->request->post['payment_payco_final_order_status_id'] = 5;
-		} 
 
 		$data['breadcrumbs'] = array();
 
@@ -166,7 +82,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_extension'),
-			'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true)
+			'href' => $this->url->link('extension/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true)
 		);
 
 		$data['breadcrumbs'][] = array(
@@ -179,103 +95,59 @@ class ControllerExtensionPaymentPayco extends Controller {
 
 		$data['cancel'] = $this->url->link('extension/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true);
 
-		if (isset($this->request->post['payment_payco_merchant'])) {
-			$data['payment_payco_merchant'] = trim($this->request->post['payment_payco_merchant']);
-		} else {
-			$data['payment_payco_merchant'] = trim($this->config->get('payment_payco_merchant'));
-		}
 
-		if (isset($this->request->post['payment_payco_title'])) {
-			$data['payment_payco_title'] = $this->request->post['payment_payco_title'];
+		if (isset($this->request->post['payment_payco_idcliente'])) {
+			$data['payment_payco_idcliente'] = $this->request->post['payment_payco_idcliente'];
 		} else {
-			if ($this->config->get('payment_payco_title') !== null) {
-				$data['payment_payco_title'] = $this->config->get('payment_payco_title');
-			} else {
-				$data['payment_payco_title'] = $this->language->get('entry_title_default');
-			}
-		}
-
-		if (isset($this->request->post['payment_payco_description'])) {
-			$data['payment_payco_description'] = $this->request->post['payment_payco_description'];
-		} else {
-			if ($this->config->get('payment_payco_description') !== null) {
-				$data['payment_payco_description'] = $this->config->get('payment_payco_description');
-			} else {
-				$data['payment_payco_description'] = $this->language->get('entry_description_default');
-			}
+			$data['payment_payco_idcliente'] = $this->config->get('payment_payco_idcliente');
 		}
 
 		if (isset($this->request->post['payment_payco_key'])) {
-			$data['payment_payco_key'] = trim($this->request->post['payment_payco_key']);
+			$data['payment_payco_key'] = $this->request->post['payment_payco_key'];
 		} else {
-			$data['payment_payco_key'] = trim($this->config->get('payment_payco_key'));
+			$data['payment_payco_key'] = $this->config->get('payment_payco_key');
 		}
 
-		if (isset($this->request->post['payment_payco_public_key'])) {
-			$data['payment_payco_public_key'] = trim($this->request->post['payment_payco_public_key']);
+		if (isset($this->request->post['payment_payco_publickey'])) {
+			$data['payment_payco_publickey'] = $this->request->post['payment_payco_publickey'];
 		} else {
-			$data['payment_payco_public_key'] = trim($this->config->get('payment_payco_public_key'));
+			$data['payment_payco_publickey'] = $this->config->get('payment_payco_publickey');
 		}
 
-		if (isset($this->request->post['payment_payco_checkout_type'])) {
-			$data['payment_payco_checkout_type'] = $this->request->post['payment_payco_checkout_type'];
+		if (isset($this->request->post['payment_payco_total'])) {
+			$data['payment_payco_total'] = $this->request->post['payment_payco_total'];
 		} else {
-			$data['payment_payco_checkout_type'] = $this->config->get('payment_payco_checkout_type');
+			$data['payment_payco_total'] = $this->config->get('payment_payco_total');
 		}
 
-		if (isset($this->request->post['payment_payco_comision'])) {
-			$data['payment_payco_comision'] = $this->request->post['payment_payco_comision'];
+		if (isset($this->request->post['payment_payco_order_status_id'])) {
+			$data['payment_payco_order_status_id'] = $this->request->post['payment_payco_order_status_id'];
 		} else {
-			$data['payment_payco_comision'] = $this->config->get('payment_payco_comision')?$this->config->get('payment_payco_comision'):2.99;
+			$data['payment_payco_order_status_id'] = $this->config->get('payment_payco_order_status_id');
 		}
 
-		if (isset($this->request->post['payment_payco_valor_comision'])) {
-			$data['payment_payco_valor_comision'] = $this->request->post['payment_payco_valor_comision'];
+		if (isset($this->request->post['payment_payco_accepted_status_id'])) {
+			$data['payment_payco_accepted_status_id'] = $this->request->post['payment_payco_accepted_status_id'];
 		} else {
-			$data['payment_payco_valor_comision'] = $this->config->get('payment_payco_valor_comision')?$this->config->get('payment_payco_valor_comision'):600;
+			$data['payment_payco_accepted_status_id'] = $this->config->get('payment_payco_accepted_status_id');
 		}
 
-		if (isset($this->request->post['payment_payco_test'])) {
-			$data['payment_payco_test'] = $this->request->post['payment_payco_test'];
+		if (isset($this->request->post['payment_payco_pending_status_id'])) {
+			$data['payment_payco_pending_status_id'] = $this->request->post['payment_payco_pending_status_id'];
 		} else {
-			$data['payment_payco_test'] = $this->config->get('payment_payco_test');
-		}
-		
-		if (isset($this->request->post['payment_payco_language'])) {
-			$data['payment_payco_language'] = $this->request->post['payment_payco_language'];
-		} else {
-			$data['payment_payco_language'] = $this->config->get('payment_payco_language');
+			$data['payment_payco_pending_status_id'] = $this->config->get('payment_payco_pending_status_id');
 		}
 
-		if (isset($this->request->post['payment_payco_status'])) {
-			$data['payment_payco_status'] = $this->request->post['payment_payco_status'];
+		if (isset($this->request->post['payment_payco_rejected_status_id'])) {
+			$data['payment_payco_rejected_status_id'] = $this->request->post['payment_payco_rejected_status_id'];
 		} else {
-			$data['payment_payco_status'] = 0;
+			$data['payment_payco_rejected_status_id'] = $this->config->get('payment_payco_rejected_status_id');
 		}
 
-		if (isset($this->request->post['payment_payco_callback'])) {
-			$data['payment_payco_callback'] = $this->request->post['payment_payco_callback'];
+		if (isset($this->request->post['payment_payco_failed_status_id'])) {
+			$data['payment_payco_failed_status_id'] = $this->request->post['payment_payco_failed_status_id'];
 		} else {
-			$data['payment_payco_callback'] = $this->config->get('payment_payco_callback');
-		}
-
-		if (isset($this->request->post['payment_payco_confirmation'])) {
-			$data['payment_payco_confirmation'] = $this->request->post['payment_payco_confirmation'];
-		} else {
-			$data['payment_payco_confirmation'] = $this->config->get('payment_payco_confirmation');
-
-		}
-
-		if (isset($this->request->post['payment_payco_initial_order_status_id'])) {
-			$data['payment_payco_initial_order_status_id'] = $this->request->post['payment_payco_initial_order_status_id'];
-		} else {
-			$data['payment_payco_initial_order_status_id'] = $this->config->get('payment_payco_initial_order_status_id');
-		}
-
-		if (isset($this->request->post['payment_payco_final_order_status_id'])) {
-			$data['payment_payco_final_order_status_id'] = $this->request->post['payment_payco_final_order_status_id'];
-		} else {
-			$data['payment_payco_final_order_status_id'] = $this->config->get('payment_payco_final_order_status_id');
+			$data['payment_payco_failed_status_id'] = $this->config->get('payment_payco_failed_status_id');
 		}
 
 		$this->load->model('localisation/order_status');
@@ -289,13 +161,18 @@ class ControllerExtensionPaymentPayco extends Controller {
 		}
 
 		$this->load->model('localisation/geo_zone');
-
 		$data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
 
 		if (isset($this->request->post['payment_payco_status'])) {
 			$data['payment_payco_status'] = $this->request->post['payment_payco_status'];
 		} else {
 			$data['payment_payco_status'] = $this->config->get('payment_payco_status');
+		}
+
+		if (isset($this->request->post['payment_payco_teststatus'])) {
+			$data['payment_payco_teststatus'] = $this->request->post['payment_payco_teststatus'];
+		} else {
+			$data['payment_payco_teststatus'] = $this->config->get('payment_payco_teststatus');
 		}
 
 		if (isset($this->request->post['payment_payco_sort_order'])) {
@@ -309,7 +186,6 @@ class ControllerExtensionPaymentPayco extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 
 		$this->response->setOutput($this->load->view('extension/payment/payco', $data));
-
 	}
 
 	protected function validate() {
@@ -317,39 +193,23 @@ class ControllerExtensionPaymentPayco extends Controller {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
-		if (!$this->request->post['payment_payco_title']) {
-			$this->error['title'] = $this->language->get('error_title');
-		}
-
-		if (!$this->request->post['payment_payco_description']) {
-			$this->error['description'] = $this->language->get('error_description');
-		}
-
-		if (!$this->request->post['payment_payco_merchant']) {
-			$this->error['merchant'] = $this->language->get('error_merchant');
+		if (!$this->request->post['payment_payco_idcliente']) {
+			$this->error['idcliente'] = $this->language->get('error_idcliente');
 		}
 
 		if (!$this->request->post['payment_payco_key']) {
 			$this->error['key'] = $this->language->get('error_key');
 		}
 
-		if (!$this->request->post['payment_payco_public_key']) {
-			$this->error['public_key'] = $this->language->get('error_public_key');
+		if (!$this->request->post['payment_payco_publickey']) {
+			$this->error['publickey'] = $this->language->get('error_publickey');
 		}
 
-		if (!$this->request->post['payment_payco_callback']) {
-			$this->request->post['payment_payco_callback'] = HTTP_CATALOG . 'index.php?route=extension/payment/payco/callback&'; //permitir success
-		}
-
-		if (!$this->request->post['payment_payco_confirmation']) {
-			$this->request->post['payment_payco_confirmation'] = HTTP_CATALOG . 'index.php?route=extension/payment/payco/callback';
-		}
-		
 		return !$this->error;
 	}
-
 	public function uninstall()
     {
+        $this->load->model('extension/payment/payco');
         $this->load->model('setting/setting');
         $this->model_setting_setting->deleteSetting('payment_payco');
     }

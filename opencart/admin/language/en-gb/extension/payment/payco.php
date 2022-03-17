@@ -1,61 +1,41 @@
 <?php
 // Heading
-$_['heading_title']      = 'ePayco';
-$_['text_payco']	  = '<a href="https://epayco.co/" target="_blank"><img src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logo-fondo-oscuro-lite.png
-" alt="ePayco" title="ePayco" style="max-width: 90px;" /></a>';
-$_['text_extension'] = 'Extensions';
-// Text 
-$_['text_payment']       = 'Payment';
-$_['text_edit']       	 = 'Configuration ePayco';
-$_['text_info']          = '<b>This module allows you to accept secure payments through the ePayco payment platform</b>
-					        <br>If the customer decides to pay for ePayco, the status of the order will change to ePayco Waiting for Payment
-					        <br>When the payment is Accepted or Rejected ePayco sends a configuration to the store to change the status of the order.';
-$_['text_success']       = 'Success: Modulo ePayco update succesfull!';
+$_['heading_title']		 = 'ePayco';
 
+// Text
+$_['text_extension']	 = 'Extensiones';
+$_['text_success']		 = 'Cambios guardados exitosamente para ePayco!';
+$_['text_edit']          = 'Editar ePayco';
+$_['text_payco']	  = '<a href="https://epayco.co/" target="_blank"><img src="view/image/payment/payco.png" alt="ePayco" title="ePayco" style="border: 1px solid #EEEEEE;" /></a>';
+$_['text_true'] 		 = 'Si';
+$_['text_false']		 = 'No';
 // Entry
-$_['entry_title']       = 'Title:';
-$_['entry_title_default']       = 'ePayco CheckOut (Credit, debit cards, and cash).';
-$_['entry_title_description']       = 'Corresponds to the title that the user sees during the checkout.';
-$_['entry_description']       = 'Description:';
-$_['entry_description_default']       = 'ePayco Gateway (Credit, debit cards, and cash).';
-$_['entry_description_description']       = 'Corresponds to the description that the user will see during the checkout';
-$_['entry_merchant']     = 'P_CUST_ID_CLIENTE:';
-$_['entry_merchant_description'] = 'Customer ID that identifies you in ePayco. You can find it in your customer panel in the configuration option.';
-$_['entry_key']          = 'P_KEY:';
-$_['entry_key_description'] = 'Key to sign the information sent and received from ePayco. You can find it in your customer panel in the configuration option.';
-$_['entry_public_key']          = 'PUBLIC_KEY:';
-$_['entry_public_key_description'] = 'Key to authenticate and consume ePayco services, provided in your customer panel in the option.';
-$_['entry_checkout_type']          = 'Checkout Type:';
-$_['entry_checkout_type_description'] = '(Onpage Checkout, the user to pay remains on the site) or (Standart Checkout, the user to pay is redirected to the ePayco gateway)';
-$_['entry_comision']     = '% comisión ePayco:';
-$_['entry_valor_comision'] ='Valor comisión Payco:';
-$_['entry_callback']     = 'URL Response:';
-$_['entry_callback_description']     = 'Answer url to confirm payments from ePayco';
-$_['entry_confirmation']     = 'URL Confirmation:';
-$_['entry_confirmation_description']     = 'Url of the store where ePayco confirms the payment';
-$_['entry_test']         = 'Test Mode:';
-$_['entry_test_description']     = 'Enable payment sending in test mode';
-$_['entry_languaje']         = 'Language:';
-$_['entry_languaje_description']     = 'Select the language of the checkout';
-$_['text_es']         = 'Es';
-$_['text_en']     = 'En';
-$_['entry_total']        = 'Total:<br /><span class="help">The checkout total the order must reach before this payment method becomes active</span>';
-$_['entry_initial_order_status'] = 'Initial Order Status:';
-$_['entry_initial_order_status_description'] = 'Select the status of the order that will be applied when starting the payment of the order';
-$_['entry_final_order_status'] = 'Final Order Status:';
-$_['entry_final_order_status_description'] = 'Select the status of the order that will be applied when accepting and confirming the payment of the order';
-$_['entry_geo_zone']     = 'Geo Zone:';
-$_['entry_status']       = 'Enable/Disable:';
-$_['entry_status_description'] = 'Enable ePayco Checkout' ;
-$_['entry_sort_order']   = 'Order:';
+$_['entry_idcliente']	 = 'P_CUST_ID_CLIENTE';
+$_['entry_key']	 		 = 'P_KEY';
+$_['entry_publickey']	 = 'PUBLIC_KEY';
+$_['entry_total']		 = 'Total';
+$_['entry_order_status'] = 'Estado del pedido';
+$_['entry_accepted_status'] = 'Estatus aceptado
+';
+$_['entry_pending_status'] = 'Estatus pendiente
+';
+$_['entry_rejected_status'] = 'Estatus rechazado
+';
+$_['entry_failed_status'] = 'Estatus fallido
+';
+$_['entry_geo_zone']	 = 'Zona geográfica';
+$_['entry_status']		 = 'Estado';
+$_['entry_sort_order']	 = 'Orden de Clasificación';
+$_['entry_teststatus']	 = 'Modo de pruebas';
 
-// Error 
-$_['error_permission']   = 'Alert: You do not have permission to modify the ePayco module!';
-$_['error_title']        = 'Title Required!';
-$_['error_description']  = 'Description Required!';
-$_['error_merchant']     = 'P_CUST_ID_CLIENTE Required!';
-$_['error_key']          = 'P_KEY Required!';
-$_['error_public_key']   = 'PUBLIC_KEY Required!';
-$_['error_callback']     = 'URL Response Required!';
-$_['error_confirmation'] = 'URL Confirmation Required!';
-?>
+// Help
+$_['help_idcliente']		 = 'ID de cliente que lo representa en la plataforma. es Proporcionado en su panel de clientes en la opción configuración.';
+$_['help_key']		 = 'Corresponde a la llave transacción de su cuenta, Proporcionado en su panel de clientes en la opción configuración.';
+$_['help_publickey']	= 'Corresponde a la llave de autenticación en el API Rest, Proporcionado en su panel de clientes en la opción configuración.';
+$_['help_total']		 = 'El total de pago que debe alcanzar el pedido antes de que este método de pago se active.';
+
+// Error
+$_['error_permission']	 = 'Advertencia: No tienes permiso para modificar el pago ePayco!';
+$_['error_idcliente']	 = 'P_CUST_ID_CLIENTE es Requerido!';
+$_['error_key']	 = 'P_KEY es Requerido!';
+$_['error_publickey']	 = 'PUBLIC_KEY es Requerido!';

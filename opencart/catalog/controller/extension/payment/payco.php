@@ -1,140 +1,76 @@
 <?php
 class ControllerExtensionPaymentPayco extends Controller {
 	public function index() {
-		$this->load->language('extension/payment/payco');
-		$data['button_confirm'] = $this->language->get('button_confirm');
 		$this->load->model('checkout/order');
+
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-		$data['action']='https://secure.payco.co/payment.php';
-		$data['p_cust_id_cliente'] = $this->config->get('payment_payco_merchant');
-		$data['p_timestamp'] = time();
-		$data['p_amount'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
-		$queryOrderEpayco = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_total WHERE order_id = '" . (int)$order_info['order_id'] . "'");
-		if(count($queryOrderEpayco->row)>0){
-		    $queryOrder = $queryOrderEpayco;
+		$data['ap_publickey'] = $this->config->get('payment_payco_publickey');
+		$data['ap_test'] = $this->config->get('payment_payco_teststatus');
+		if ($order_info['currency_code'] == 'COP' || $order_info['currency_code'] == 'cop') {
+			$amount = $this->currency->format($order_info['total'], $order_info['currency_code'], false);
+			$amount = str_replace('$', '', $amount);
+			$amount = str_replace('.', '', $amount);
+			$amount = str_replace(',', '', $amount);
 		}else{
-			$queryOrder = null;
+			$amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
 		}
-        $p_tax=0;
-        $p_amount_ = 0; 
-		foreach ($queryOrder->rows as $orderData){
-		    if($orderData['code'] == "tax"){
-		       $p_tax +=  floatval($orderData['value']);
-		    }
-		    
-		    if($orderData['code'] == "total"){
-		       $p_amount_ +=  floatval($orderData['value']);
-		    }
-		}
-		$p_amount_base = $p_amount_ - $p_tax;
-		$data['p_tax'] = $p_tax;
-		$data['p_amount_base']=$p_amount_base;
-		if((int) $this->config->get('payment_payco_language') == 0){
-		    $lang = "en";
-		}else{
-		    $lang = "es";
-		}
-		$countryCode = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8')?html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8'): "CO";
-		$data['p_lang'] = $lang;
-		$data['p_show_form'] = 'PAYMENT_FORM';
-		$data['p_test_request'] = $this->config->get('payco_test');
-		$data['p_type'] = 'AUTH_CAPTURE';
-		$data['p_currency_code'] = $order_info['currency_code'];;
-		$data['p_id_invoice'] = $this->session->data['order_id'];
-		$data['p_description'] = html_entity_decode( $this->language->get('text_payment_description').$this->session->data['order_id']. ' '.$this->language->get('text_payment_description_in').' '.$this->config->get('config_name'), ENT_QUOTES, 'UTF-8');
-		$data['p_billing_first_name'] = html_entity_decode($order_info['payment_firstname'], ENT_QUOTES, 'UTF-8');
-		$data['p_billing_last_name'] = html_entity_decode($order_info['payment_lastname'], ENT_QUOTES, 'UTF-8');
-		$data['p_billing_company'] = html_entity_decode($order_info['payment_company'], ENT_QUOTES, 'UTF-8');
-		$data['p_billing_address'] = html_entity_decode($order_info['payment_address_1'], ENT_QUOTES, 'UTF-8') . ' ' . html_entity_decode($order_info['payment_address_2'], ENT_QUOTES, 'UTF-8');
-		$data['p_billing_city'] = html_entity_decode($order_info['payment_city'], ENT_QUOTES, 'UTF-8');
-		$data['p_billing_state'] = html_entity_decode($order_info['payment_zone'], ENT_QUOTES, 'UTF-8');
-		$data['p_billing_zip'] = html_entity_decode($order_info['payment_postcode'], ENT_QUOTES, 'UTF-8');
-		$data['p_billing_country'] = html_entity_decode($order_info['payment_country'], ENT_QUOTES, 'UTF-8');
-		$data['p_billing_phone'] = $order_info['telephone'];
-		$data['p_shiping_first_name'] = html_entity_decode($order_info['shipping_firstname'], ENT_QUOTES, 'UTF-8');
-		$data['p_shiping_last_name'] = html_entity_decode($order_info['shipping_lastname'], ENT_QUOTES, 'UTF-8');
-		$data['p_shiping_company'] = html_entity_decode($order_info['shipping_company'], ENT_QUOTES, 'UTF-8');
-		$data['p_shiping_address'] = html_entity_decode($order_info['shipping_address_1'], ENT_QUOTES, 'UTF-8') . ' ' . html_entity_decode($order_info['shipping_address_2'], ENT_QUOTES, 'UTF-8');
-		$data['p_shiping_city'] = html_entity_decode($order_info['shipping_city'], ENT_QUOTES, 'UTF-8');
-		$data['p_shiping_state'] = html_entity_decode($order_info['shipping_zone'], ENT_QUOTES, 'UTF-8');
-		$data['p_shiping_zip'] = html_entity_decode($order_info['shipping_postcode'], ENT_QUOTES, 'UTF-8');
-		$data['p_shiping_country'] = $countryCode;
-		$data['p_customer_ip'] = $this->request->server['REMOTE_ADDR'];
-		$data['p_email'] = $order_info['email'];
-		$data['p_extra1'] = 'OpenCart V 3.0.2';
-		$data['p_url_response'] =$this->config->get('payment_payco_callback');
-		$data['p_url_confirmation'] =$this->config->get('payment_payco_confirmation');
-		$data['p_public_key'] = $this->config->get('payment_payco_public_key');
-		$data['p_itemname']="";
+		$data['ap_amount'] = $amount;
+		$data['ap_currency'] = $order_info['currency_code'];
+		$data['ap_isocode']	=	$order_info['payment_iso_code_2'];
+		$data['ap_purchasetype'] = 'Item';
+		$data['ap_description'] = $this->config->get('config_name');
+		$data['ap_itemcode'] = $this->session->data['order_id'];
+		$data['ap_returnurl'] = $this->url->link('extension/payment/payco/callback').'&'; //permitir success
+		$data['ap_confirmation'] = $this->url->link('extension/payment/payco/callback');
+		$data['ap_itemname']="";
+		//Descripcion
 		foreach ($this->cart->getProducts() as $product) {
 			 if(trim($product['name'])!=""){
-			 	if($data['p_itemname']==""){
-			 		$data['p_itemname']=$product['name'];
+			 	if($data['ap_itemname']==""){
+			 		$data['ap_itemname']=$product['name'];
 			 	}else{
-			 		$data['p_itemname'] = $data['p_itemname'].",".$product['name'];
+			 		$data['ap_itemname'] = $data['ap_itemname'].",".$product['name'];
 			 	}
 			 	
 			 }
 		}
-
-		if ((int) $this->config->get('payment_payco_test') == 1) {
-			$data['p_test_mode'] = 'true';
-		} else {
-			$data['p_test_mode'] = 'false';
+		if(strlen($data['ap_description'])<10){
+			$data['ap_description']="Compra ".$data['ap_description'];
 		}
 
-		$data['p_payco_checkout_type'] = $this->config->get('payment_payco_checkout_type');
-
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/payco.tpl')) {
-			return $this->load->view($this->config->get('config_template') . '/template/payment/payco.tpl', $data);
-		} else {
-			return $this->load->view('extension/payment/payco', $data);
-		}
-
+		return $this->load->view('extension/payment/payco', $data);
 	}
-
 	public function callback() 
 	{
+		
+
 		if(isset($_GET['ref_payco']) || isset($_GET['?ref_payco'])){
 			if(isset($_GET['?ref_payco'])){
 				$_GET['ref_payco']=$_GET['?ref_payco'];
 			}
-            if(isset($_GET['ref_payco'])){
-                	$confirmation=true;
-            }
-			$url="https://secure.epayco.co/validation/v1/reference/".$_GET['ref_payco'];
-			$response=json_decode(file_get_contents($url));
-			$_REQUEST=(array)$response->data;		
-		}
 
-		if (isset($_REQUEST['x_id_invoice'])) {
+			$url="https://api.secure.payco.co/validation/v1/reference/".$_GET['ref_payco'];
+			$response=json_decode(file_get_contents($url));
+			$_REQUEST=(array)$response->data->original;
+			
+		}
+		if (isset($_REQUEST['x_extra1'])) {
 			$order_id = $_REQUEST['x_extra1'];
 		} else {
-		    $this->load->model('checkout/order');
-		    $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-			$order_id = $order_info['order_id'];
+			$order_id = 0;
 		}
 		if (isset($_REQUEST['x_ref_payco'])) {
 			$this->load->model('checkout/order');
-			$p_cust_id_cliente=$this->config->get('payment_payco_merchant');
-            $p_key=$this->config->get('payment_payco_key');
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payco_order_status_id'));
+			$p_cust_id_cliente=$this->config->get('payment_payco_idcliente');
+             $p_key=$this->config->get('payment_payco_key');
 
                 $x_ref_payco=$_REQUEST['x_ref_payco'];
                 $x_transaction_id=$_REQUEST['x_transaction_id'];
                 $x_amount=$_REQUEST['x_amount'];
                 $x_currency_code=$_REQUEST['x_currency_code'];
                 $x_signature=$_REQUEST['x_signature'];
-				$x_cod_response=$_REQUEST['x_cod_response'];
-				$isTest=$_REQUEST['x_test_request'];
-				$x_test_request = $_REQUEST['x_test_request'];
-				$x_approval_code = $_REQUEST['x_approval_code'];
-				$x_cod_transaction_state = $_REQUEST['x_cod_transaction_state '];
-				if($isTest == "TRUE"){
-					$isTest_= 1;
-				}else{
-					$isTest_= 2;
-				}
-				
+
                 $signature=hash('sha256',
                        $p_cust_id_cliente.'^'
                       .$p_key.'^'
@@ -143,251 +79,38 @@ class ControllerExtensionPaymentPayco extends Controller {
                       .$x_amount.'^'
                       .$x_currency_code
                     );
-				$queryOrderEpayco = $this->db->query("SELECT * FROM " . DB_PREFIX . "epayco_order WHERE order_id = '" . (int)$order_id . "'");
-				if(count($queryOrderEpayco->row)>0){
-					$queryProduct_ = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");
-				}else{
-					$queryProduct_ = null;
-				}
-                if ((int) $this->config->get('payment_payco_test') == 1) {
-                	$isTestPluginMode = 'yes';
-                } else {
-                	$isTestPluginMode = 'no';
-                }
-                $order_info = $this->model_checkout_order->getOrder($order_id);
-                $data_p_amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
-                $isTestMode = $x_test_request == "TRUE" ? "true" : "false";
-                if(floatval($data_p_amount) == floatval($x_amount)){
-                    if("yes" == $isTestPluginMode){
-                        $validation = true;
-                    }
-                    if("no" == $isTestPluginMode ){
-                        if($x_approval_code != "000000" && $x_cod_transaction_state == 1){
-                            $validation = true;
-                        }else{
-                            if($x_cod_transaction_state != 1){
-                                $validation = true;
-                            }else{
-                                $validation = false;
-                            }
-                        }
-                        
-                    }
-                }else{
-                     $validation = false;
-                }
+
 				//Validamos la firma
-            if($x_signature==$signature && $validation){
-            
+                if($x_signature==$signature){
+                $x_cod_response=$_REQUEST['x_cod_response'];
                 switch ((int)$x_cod_response) {
-                    case 1:{
-						$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Complete test'");
-						if($isTest_== 1){
-							if(count($query->row)>0){
-								$orderStatus = $query->row["order_status_id"];
-							}
-						}else{
-							$orderStatus = $this->config->get('payment_payco_final_order_status_id');
-						}
-                       $this->model_checkout_order->addOrderHistory($order_id,$orderStatus, '', true);
-					}break;
-                    case 2:{
-						if($queryProduct_){
-							if($queryOrderEpayco->row["discount"] == "1"){
-							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
-							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-							
-							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
-								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
-							}
-						}
-                        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
-						if($isTest_== 1){
-							if(count($query->row)>0){
-								$orderStatus = $query->row["order_status_id"];
-							}
-						}else{
-							$orderStatus = 7;
-						}
-                        $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-					}break;
-                    case 3:{
-						$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Pending test'");
-						if($isTest_== 1){
-							if(count($query->row)>0){
-								$orderStatus = $query->row["order_status_id"];
-							}
-						}else{
-							$orderStatus = 1;
-						}
-                        $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-					}break;
-                    case 4:{
-						if($queryProduct_){
-							if($queryOrderEpayco->row["discount"] == "1"){
-							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
-							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-							
-							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
-								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
-							}
-		
-						}
-                        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
-						if($isTest_== 1){
-							if(count($query->row)>0){
-								$orderStatus = $query->row["order_status_id"];
-							}
-						}else{
-							$orderStatus = 7;
-						}
-                        $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-					} break; 
-					case 10:{
-						if($queryProduct_){
-							if($queryOrderEpayco->row["discount"] == "1"){
-							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
-							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-							
-							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
-								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
-							}
-		
-						}
-                        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
-						if($isTest_== 1){
-							if(count($query->row)>0){
-								$orderStatus = $query->row["order_status_id"];
-							}
-						}else{
-							$orderStatus = 7;
-						}
-                        $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-					} break;  
-					case 11:{
-						if($queryProduct_){
-							if($queryOrderEpayco->row["discount"] == "1"){
-							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
-							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-							
-							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
-								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
-							}
-		
-						}
-                        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
-						if($isTest_== 1){
-							if(count($query->row)>0){
-								$orderStatus = $query->row["order_status_id"];
-							}
-						}else{
-							$orderStatus = 7;
-						}
-                        $this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-					} break;           
+                    case 1:
+                       $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_payco_accepted_status_id'), '', true);
+                        break;
+                    case 2:
+                        $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_payco_rejected_status_id'), '', true);
+                        break;
+                    case 3:
+                        $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_payco_pending_status_id'), '', true);
+                        break;
+                    case 4:
+                       $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_payco_failed_status_id'), '', true);
+                        break;              
                     
                 }
-					if($x_cod_response==1 || $x_cod_response==3){
-						if (isset($_REQUEST['x_ref_payco'])) {
-							if($confirmation == "true"){
-								$this->response->redirect($this->url->link('checkout/success'));
-							}
-							die($x_cod_response);
-						}else{
-							$this->response->redirect($this->url->link('checkout/success'));
-						}
-					}else{
-						$this->response->redirect($this->url->link('checkout/failure'));
-					}
 
-			}else{
-				if($queryProduct_){
-					if($queryOrderEpayco->row["discount"] == "1"){
-					$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
-					$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-					$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-					$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
-						"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
-					}
-				}
-				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
-				if($isTest_== 1){
-					if(count($query->row)>0){
-						$orderStatus = $query->row["order_status_id"];
-					}
-				}else{
-					$orderStatus = 7;
-				}
-				$this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-			} 	               	
+                if($x_cod_response==1 || $x_cod_response==3){
+                	$this->response->redirect($this->url->link('checkout/success'));
+                }else{
+                	$this->response->redirect($this->url->link('checkout/failure'));
+                }
+
+                }else{
+                    die("Firma no valida");
+                }                	
 
 		}else{
-				if($queryProduct_){
-					if($queryOrderEpayco->row["discount"] == "1"){
-						$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
-						$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-						$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-								
-						$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
-									"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
-					}
-				}
-				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Canceled test'");
-				if($isTest_== 1){
-					if(count($query->row)>0){
-						$orderStatus = $query->row["order_status_id"];
-					}
-				}else{
-					$orderStatus = 7;
-				}
-				$this->model_checkout_order->addOrderHistory($order_id, $orderStatus, '', true);
-				$this->response->redirect($this->url->link('checkout/failure'));
-			}
-	}
-
-
-	public function confirm() {
-
-		$queryOrderEpayco = $this->db->query("SELECT * FROM " . DB_PREFIX . "epayco_order WHERE order_id = '" . (int)$this->session->data['order_id'] . "'");
-		if(count($queryOrderEpayco->row)<=0){
-			foreach ($this->cart->getProducts() as $product) {
-				$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product['product_id'] . "'");
-				$disconut = (int)$queryProduct->row["quantity"] - (int)$product['quantity'];
-				$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$product['product_id'] . "' LIMIT 1");		
-			}
-			$this->db->query("INSERT INTO " . DB_PREFIX . "epayco_order (order_id, is_test, discount)  VALUES ( '" . (int)$this->session->data['order_id'] . "','" . (int) $this->config->get('payment_payco_test') . "','" . 1 . "')
-			");
+			echo "no hay  request";
 		}
-	   
-	    if ((int) $this->config->get('payment_payco_test') == 1) {
-			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Pending test'");
-			if(count($query->row)>0){
-				$orderStatus = $query->row["order_status_id"];
-			}else{
-				$orderStatus = 1;
-			}
-		} else {
-			$orderStatus = 1;
-		}
-
-		$json = array();
-		if (isset($this->session->data['payment_method']['code']) && $this->session->data['payment_method']['code'] == 'payco') {
-			$this->load->language('extension/payment/cheque');
-
-			$this->load->model('checkout/order');
-			
-			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], (int)$orderStatus, '', true);
-		
-			$json['action'] = true;
-		}else{
-			$json['action'] = false;
-		}
-		
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
 	}
 }
