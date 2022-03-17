@@ -15,12 +15,18 @@ class ModelExtensionPaymentPayco extends Model {
 			$status = false;
 		}
 
+		$payco_title = $this->language->get('text_title');
+
+		if ($this->config->get('payment_payco_title')) {
+			$payco_title = $this->config->get('payment_payco_title');
+		}
+		
 		$method_data = array();
 
 		if ($status) {
 			$method_data = array(
 				'code'       => 'payco',
-				'title'      => $this->language->get('text_title'),
+				'title'      => $payco_title."<br><img src='https://multimedia.epayco.co/epayco-landing/btns/epayco-logo-fondo-oscuro-lite.png' width='200px'>",
 				'terms'      => '',
 				'sort_order' => $this->config->get('payment_payco_sort_order')
 			);
