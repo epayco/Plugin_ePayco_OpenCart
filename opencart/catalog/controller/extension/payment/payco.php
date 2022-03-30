@@ -128,7 +128,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 				$isTest=$_REQUEST['x_test_request'];
 				$x_test_request = $_REQUEST['x_test_request'];
 				$x_approval_code = $_REQUEST['x_approval_code'];
-				$x_cod_transaction_state = $_REQUEST['x_cod_transaction_state '];
+				$x_cod_transaction_state = $_REQUEST['x_cod_transaction_state'];
 				if($isTest == "TRUE"){
 					$isTest_= 1;
 				}else{
@@ -196,7 +196,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+							//$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
 							
 							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
@@ -228,7 +228,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+							//$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
 							
 							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
@@ -250,7 +250,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+							//$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
 							
 							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
@@ -272,7 +272,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+							//$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
 							
 							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
@@ -309,7 +309,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 					if($queryOrderEpayco->row["discount"] == "1"){
 					$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 					$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-					$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+					//$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
 					$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 						"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
 					}
@@ -330,7 +330,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 					if($queryOrderEpayco->row["discount"] == "1"){
 						$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 						$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-						$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+						//$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
 								
 						$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 									"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");

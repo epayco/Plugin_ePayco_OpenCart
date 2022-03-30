@@ -45,6 +45,11 @@
 </form>
 
 <script>
+
+   document.addEventListener("contextmenu", function(e){
+       e.preventDefault();
+	}, false);
+	
   $("#button_confirm").on( "click", function(e) {
     e.preventDefault();
     var handler = ePayco.checkout.configure({
