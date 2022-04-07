@@ -102,7 +102,7 @@ class ControllerExtensionPaymentPayco extends Controller {
             if(isset($_GET['ref_payco'])){
                 	$confirmation=true;
             }
-			$url="https://secure.epayco.io/validation/v1/reference/".$_GET['ref_payco'];
+			$url="https://secure.epayco.co/validation/v1/reference/".$_GET['ref_payco'];
 			$response=json_decode(file_get_contents($url));
 			$_REQUEST=(array)$response->data;		
 		}
@@ -196,8 +196,9 @@ class ControllerExtensionPaymentPayco extends Controller {
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-							
+							if($isTest_== 1){
+								$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+							}
 							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
 							}
@@ -228,8 +229,9 @@ class ControllerExtensionPaymentPayco extends Controller {
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-							
+							if($isTest_== 1){
+								$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+							}
 							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
 							}
@@ -250,8 +252,9 @@ class ControllerExtensionPaymentPayco extends Controller {
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-							
+							if($isTest_== 1){
+								$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+							}
 							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
 							}
@@ -272,8 +275,9 @@ class ControllerExtensionPaymentPayco extends Controller {
 							if($queryOrderEpayco->row["discount"] == "1"){
 							$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 							$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-							
+							if($isTest_== 1){
+								$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+							}
 							$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 								"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
 							}
@@ -309,7 +313,9 @@ class ControllerExtensionPaymentPayco extends Controller {
 					if($queryOrderEpayco->row["discount"] == "1"){
 					$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 					$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-					$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+					if($isTest_== 1){
+						$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+					}	
 					$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 						"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
 					}
@@ -330,8 +336,9 @@ class ControllerExtensionPaymentPayco extends Controller {
 					if($queryOrderEpayco->row["discount"] == "1"){
 						$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$queryProduct_->row["product_id"] . "'");
 						$disconut = (int)$queryProduct->row["quantity"] + (int)$queryProduct_->row["quantity"];
-						$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
-								
+						if($isTest_== 1){
+							$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$queryProduct_->row["product_id"] . "' LIMIT 1");	
+						}	
 						$this->db->query("UPDATE `" . DB_PREFIX . "epayco_order` SET `discount` = '" . 2 . 
 									"' WHERE `order_id` = '" .  (int) $order_id . "' LIMIT 1");
 					}
@@ -352,18 +359,7 @@ class ControllerExtensionPaymentPayco extends Controller {
 
 	public function confirm() {
 
-		$queryOrderEpayco = $this->db->query("SELECT * FROM " . DB_PREFIX . "epayco_order WHERE order_id = '" . (int)$this->session->data['order_id'] . "'");
-		if(count($queryOrderEpayco->row)<=0){
-			foreach ($this->cart->getProducts() as $product) {
-				$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product['product_id'] . "'");
-				$disconut = (int)$queryProduct->row["quantity"] - (int)$product['quantity'];
-				$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$product['product_id'] . "' LIMIT 1");		
-			}
-			$this->db->query("INSERT INTO " . DB_PREFIX . "epayco_order (order_id, is_test, discount)  VALUES ( '" . (int)$this->session->data['order_id'] . "','" . (int) $this->config->get('payment_payco_test') . "','" . 1 . "')
-			");
-		}
-	   
-	    if ((int) $this->config->get('payment_payco_test') == 1) {
+        if ((int) $this->config->get('payment_payco_test') == 1) {
 			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE name = 'Pending test'");
 			if(count($query->row)>0){
 				$orderStatus = $query->row["order_status_id"];
@@ -373,6 +369,21 @@ class ControllerExtensionPaymentPayco extends Controller {
 		} else {
 			$orderStatus = 1;
 		}
+		$queryOrderEpayco = $this->db->query("SELECT * FROM " . DB_PREFIX . "epayco_order WHERE order_id = '" . (int)$this->session->data['order_id'] . "'");
+		if(count($queryOrderEpayco->row)<=0){
+			foreach ($this->cart->getProducts() as $product) {
+				$queryProduct = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product['product_id'] . "'");
+				$disconut = (int)$queryProduct->row["quantity"] - (int)$product['quantity'];
+				if($orderStatus != 1){
+				$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `quantity` = '" . $this->db->escape($disconut) . "' WHERE `product_id` = '" . (int)$product['product_id'] . "' LIMIT 1");		
+			    }
+			    
+			}
+			$this->db->query("INSERT INTO " . DB_PREFIX . "epayco_order (order_id, is_test, discount)  VALUES ( '" . (int)$this->session->data['order_id'] . "','" . (int) $this->config->get('payment_payco_test') . "','" . 1 . "')
+			");
+		}
+	   
+	    
 
 		$json = array();
 		if (isset($this->session->data['payment_method']['code']) && $this->session->data['payment_method']['code'] == 'payco') {
