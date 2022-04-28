@@ -78,16 +78,6 @@ class ControllerExtensionPaymentPayco extends Controller {
             }
         }
 
-        if (isset($this->request->post['payment_payco_description'])) {
-            $data['payment_payco_description'] = $this->request->post['payment_payco_description'];
-        } else {
-            if ($this->config->get('payment_payco_description') !== null) {
-                $data['payment_payco_description'] = $this->config->get('payment_payco_description');
-            } else {
-                $data['payment_payco_description'] = $this->language->get('entry_description_default');
-            }
-        }
-
         if (isset($this->request->post['payment_payco_merchant'])) {
             $data['payment_payco_merchant'] = trim($this->request->post['payment_payco_merchant']);
         } else {
