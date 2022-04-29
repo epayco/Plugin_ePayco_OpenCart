@@ -11,7 +11,7 @@ $_['text_edit']       	 = 'Configuración ePayco';
 // Entry
 $_['entry_status']       = 'Estados';
 $_['entry_title']       = 'Título:';
-$_['entry_title_default']       = 'ePayco CheckOut (Tarjetas de crédito,debito,efectivo).';
+$_['entry_title_default']       = 'ePayco';
 $_['entry_title_description']       = 'Corresponde al titulo que el usuario ve durante el checkout.';
 $_['entry_description']       = 'Descripción:';
 $_['entry_description_default']       = 'ePayco Gateway (Tarjetas de crédito,debito,efectivo).';
