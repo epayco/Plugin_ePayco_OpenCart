@@ -11,7 +11,7 @@ $_['text_edit']          = 'Edit ePayco';
 // Entry
 $_['entry_status']       = 'Status';
 $_['entry_title']       = 'Title:';
-$_['entry_title_default']       = 'ePayco CheckOut (Credit, debit cards, and cash).';
+$_['entry_title_default']       = 'ePayco';
 $_['entry_title_description']       = 'Corresponds to the title that the user sees during the checkout.';
 $_['entry_description']       = 'Description:';
 $_['entry_description_default']       = 'ePayco Gateway (Credit, debit cards, and cash).';
