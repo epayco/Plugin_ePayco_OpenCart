@@ -18,7 +18,6 @@
     }
   });
 $('#button-confirm').on('click', function() {
-  debugger
     var handler = ePayco.checkout.configure({
       key: "{{ p_public_key }}",
       test: "{{ p_test_mode }}"
@@ -52,7 +51,7 @@ $('#button-confirm').on('click', function() {
 			$('#button-confirm').button('reset');
 		},
 		success: function(json) {
-            handler.open(data)
+        handler.open(data)
 		},
 		error: function(xhr, ajaxOptions, thrownError) {
 			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
