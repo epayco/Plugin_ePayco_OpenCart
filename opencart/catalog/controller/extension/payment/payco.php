@@ -160,8 +160,9 @@ class ControllerExtensionPaymentPayco extends Controller {
                             $orderStatus != 'Processing'||
                             $orderStatus != 'Processed'){
                             $orderStatusFinal = $this->config->get('payment_payco_final_order_status_id');
-                            $this->model_checkout_order->addOrderHistory($order_id, 1);
-                            $this->model_checkout_order->addOrderHistory($order_id, $orderStatusFinal);
+                            if($orderStatus == 'Processed' ||$orderStatus == 'Complete' ){}else{
+                                 $this->model_checkout_order->addOrderHistory($order_id, $orderStatusFinal);
+                            }
                         }
                     }break;
                     case 2:{
