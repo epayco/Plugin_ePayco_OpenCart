@@ -138,7 +138,7 @@ class Payco extends \Opencart\System\Engine\Controller {
         $response=json_decode(file_get_contents($url));
         $data = (array)$response->data;
     }
-    if(isset($_GET['comfirmation'])){
+    if(isset($_POST['x_ref_payco'])){
         $data = $_REQUEST;
         $comfirmation = true;
     }
@@ -193,7 +193,7 @@ class Payco extends \Opencart\System\Engine\Controller {
                         $orderStatus != 'Complete'||
                         $orderStatus != 'Processing'||
                         $orderStatus != 'Processed'){
-                        $orderStatusFinal = $this->config->get('payment_payco_final_order_status_id');
+                        $orderStatusFinal = $this->config->get('payment_payco_order_status_id');
                         if($orderStatus == 'Processed' ||$orderStatus == 'Complete' ){}else{
                              $this->model_checkout_order->addHistory($order_id, $orderStatusFinal);
                         }
@@ -255,7 +255,7 @@ class Payco extends \Opencart\System\Engine\Controller {
   public function validateSignature($x_ref_payco,$x_transaction_id,$x_amount,$x_currency_code)
 	{
 		$merchan_id = $this->config->get('payment_payco_merchant_id');
-		$p_key = $this->language->get('payment_payco_merchant_key');
+		$p_key = $this->config->get('payment_payco_merchant_key');
 		return hash('sha256',
 			trim($merchan_id).'^'
 			.trim($p_key).'^'

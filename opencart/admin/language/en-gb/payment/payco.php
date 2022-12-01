@@ -10,9 +10,8 @@ $_['entry_payment_title']                = 'ePayco';
 $_['entry_merchant_id']                  = 'P_CUST_ID_CLIENTE';
 $_['entry_merchant_key']                 = 'P_KEY';
 $_['entry_public_key']                   = 'PUBLIC_KEY';
-$_['text_edit']                          = 'Edit World Xchange Online Payments';
 $_['entry_status']                       = 'Status:';
-$_['entry_order_status']                 = 'Order Status:';
+$_['entry_order_status']                 = 'Final Order Status:';
 $_['entry_card']				         = 'Store Cards';
 $_['text_button_save']                   = 'Save';
 $_['text_button_cancel']                 = 'Cancel';
@@ -27,5 +26,5 @@ $_['error_client_public_key']			 = 'PUBLIC_KEY Required!';
 $_['help_merchant_id']			         = 'You received this at the time your ePayco account was approved.';
 $_['help_public_key']			         = 'PUBLIC_KEY';
 $_['text_message']			             = 'In order to use ePayco, you must have a ePayco merchant account.
-<br>If you do not have one, you can apply for free by going to: <a href="https://world-xpay.com/apply" target="_blank">https://world-xpay.com/apply</a>';
+<br>If you do not have one, you can apply for free by going to: <a href="https://dashboard.epayco.com/dashboard#registro" target="_blank">https://dashboard.epayco.com/dashboard#registro</a>';
 ?>
