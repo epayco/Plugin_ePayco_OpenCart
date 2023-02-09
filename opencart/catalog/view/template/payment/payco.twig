@@ -1,0 +1,67 @@
+<fieldset>
+  <legend>{{ text_instruction }}</legend>
+  <p><b>{{ text_description }}</b></p>
+  <div class="border rounded p-3 mb-3">
+    <p>ePayco</p>
+  </div>
+  <div class="d-inline-block pt-2 pd-2 w-100 text-end">
+    <button type="button" id="button-confirm" class="btn btn-primary">{{ button_confirm }}</button>
+  </div>
+</fieldset>
+<script type="text/javascript"
+        src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
+</script>
+<script type="text/javascript"><!--
+$('#button-confirm').on('click', function () {
+  var handler = ePayco.checkout.configure({
+      key: "{{ p_public_key }}",
+      test: "{{ p_test_mode }}"
+    });
+    var element = this;
+    var data={
+      name: "{{ p_itemname }}",
+      description: "{{ p_itemname }}",
+      invoice: "{{ p_id_invoice }}",
+      currency: "{{ p_currency_code }}",
+      amount: "{{ p_amount }}",
+      tax_base: "{{ p_amount_base }}",
+      tax: "{{ p_tax }}",
+      country: "{{ p_shiping_country }}",
+      lang: "{{ p_lang }}",
+      external: "{{ p_payco_checkout_type }}",
+      extra1: "{{ p_id_invoice }}",
+      confirmation: "{{ p_url_confirmation }}",
+      response: "{{ p_url_response }}",
+      name_billing: "{{ p_billing_first_name ~' '~ p_billing_last_name }}",
+      address_billing: "{{ billaddress }}",
+      mobilephone_billing: "{{ billphone }}",
+      email_billing: "{{ billemail }}"
+    }
+  debugger
+    $.ajax({
+        url: 'index.php?route=extension/payco/payment/payco|createOrder&language={{ language }}',
+        dataType: 'json',
+        type: "POST",
+              data: { "orderid": {{ orderid }} },
+        beforeSend: function () {
+            $(element).prop('disabled', true).addClass('loading');
+        },
+        complete: function () {
+            $(element).prop('disabled', false).removeClass('loading');
+        },
+        success: function (json) {
+          debugger
+            if (json['error']) {
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+            }
+            handler.open(data)
+            /*if (json['redirect']) {
+                location = json['redirect'];
+            }*/
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
+//--></script>
