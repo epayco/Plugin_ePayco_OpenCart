@@ -1,0 +1,85 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="float-end">
+				<button type="submit" form="form_epayco" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fas fa-save"></i></button>
+				<a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fas fa-reply"></i></a>
+			</div>
+			<h1>{{ heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li class="breadcrumb-item"><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if error_warning %}
+		<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> {{ error_warning }}
+			<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+		</div>
+		{% endif %}
+		<div class="card">
+			<div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+			<div class="card-body">
+				<form action="{{ save }}" method="post" enctype="multipart/form-data" id="form_payco" data-oc-toggle="ajax">
+
+					<div class="tab-content">
+						<div class="tab-pane active" id="epayco_basic_configuration">
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_api_key">{{ payco_api_key }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="payment_payco_api_key" value="{{ payco_api_key_value }}" placeholder="{{ payco_api_key }}" id="input_api_key" class="form-control" />
+
+									</div>
+								</div>
+							</div>
+							
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_public_key">{{ payco_public_key }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="payment_payco_public_key" value="{{ payco_public_key_value }}" placeholder="{{ payco_public_key }}" id="input_public_key" class="form-control" />
+									</div>
+									<div class="form-text">{{ help_public_key }}</div>
+								</div>
+							</div>
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_p_key">{{ payco_p_key }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="payment_payco_p_key" value="{{ payco_p_key_value }}" placeholder="{{ payco_p_key }}" id="input_p_key" class="form-control" />
+									</div>
+									<div class="form-text">{{ help_p_key }}</div>
+								</div>
+							</div>
+					
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_dark_mode">{{ payco_dark_mode }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+                    <input type="checkbox" name="payco_dark_mode_value" {% if payco_dark_mode_value  %} checked {% endif %} id="input_dark_mode" class="form-check-input"/> <label for="input_dark_mode" class="form-check-label">{{ payco_dark_mode_label }}</label>
+									</div>
+									<div class="form-text">{{ help_dark_mode }}</div>
+								</div>
+							</div>
+
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_test_mode">{{ payco_test_mode }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+                    <input type="checkbox" name="payco_test_mode" value="{{payco_test_mode_value }}" id="input_test_mode" class="form-check-input" {% if payco_test_mode_value  %} checked {% endif %} /> <label for="input_test_mode" class="form-check-label">{{ payco_test_mode_label }}</label>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
