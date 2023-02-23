@@ -1,122 +1,85 @@
 {{ header }}{{ column_left }}
 <div id="content">
-  <div class="page-header">
-    <div class="container-fluid">
-      <div class="float-end">
-        <button type="submit" form="form-payment" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
-        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-light"><i class="fa fa-reply"></i></a></div>
-      <h1><i class="fa fa-credit-card"></i> {{ heading_title }}</h1>
-      <ol class="breadcrumb">
-        {% for breadcrumb in breadcrumbs %}
-          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-        {% endfor %}
-      </ol>
-    </div>
-  </div>
-  <div class="container-fluid">
-    <div class="card">
-      <div class="card-header">
-        <p>{{ text_message }}</p>
-      </div>
-      <h1><img src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logo-fondo-oscuro-lite.png" alt="ePayco" /> </h1>
-      <div class="card-body">
-      <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-payment">
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_settings }}</a></li>
-        </ul>
-        <div class="tab-content">
-          <div class="tab-pane active" id="tab-general">
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="input-service-key">{{ entry_payment_title }}</label>
-              <div class="col-sm-10">
-                <input type="text" name="payment_title" value="{{ payment_title }}" placeholder="{{ entry_payment_title }}" id="input-payment-title" class="form-control" />
-              </div>
-            </div>
-            <div class="row mb-3 required">
-              <label class="col-sm-2 col-form-label" for="input-service-key">{{ entry_merchant_id }}<span data-toggle="tooltip" title="{{ help_merchant_id }}"></span></label>
-              <div class="col-sm-10">
-                <input type="text" name="merchant_id" value="{{ merchant_id }}" placeholder="{{ entry_merchant_id }}" id="input-service-key" class="form-control" />
-                {% if error_service_key %}
-                <div class="text-danger">{{ error_service_key }}</div>
-                {% endif %} </div>
-            </div>
-            <div class="row mb-3 required">
-              <label class="col-sm-2 col-form-label" for="input-client-key">{{ entry_merchant_key }}</label>
-              <div class="col-sm-10">
-                <input type="text" name="merchant_key" value="{{ merchant_key }}" placeholder="{{ entry_merchant_key }}" id="input-client-key" class="form-control" />
-                {% if error_client_key %}
-                <div class="text-danger">{{ error_client_key }}</div>
-                {% endif %} </div>
-            </div>
-            <div class="row mb-3 required">
-              <label class="col-sm-2 col-form-label" for="input-client-key">{{ entry_public_key }}<span data-toggle="tooltip" title="{{ help_public_key }}"></span></label>
-              <div class="col-sm-10">
-                <input type="text" name="public_key" value="{{ public_key }}" placeholder="{{ entry_public_key }}" id="input-client-public-key" class="form-control" />
-                {% if error_client_public_key %}
-                <div class="text-danger">{{ error_client_public_key }}</div>
-                {% endif %} </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
-              <div class="col-sm-10">
-                <select name="status" id="input-status" class="form-select">
-                  <option value="1"{% if status %} selected="selected"{% endif %}>{{ text_enabled }}</option>
-                  <option value="0"{% if not status %} selected="selected"{% endif %}>{{ text_disabled }}</option>
-                </select>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="input-status">{{ entry_order_status }}</label>
-              <div class="col-sm-10">
-              
-                <select name="order_status_id" id="input-order-status" class="form-select">
-                  
-                  {% for order_status in order_statuses %}
-                    {% if order_status.order_status_id == payment_payco_order_status_id %}
-                      <option value="{{ order_status.order_status_id  }}" selected="selected">{{ order_status.name }}</option>
-                    {% else %}
-                      <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
-                    {% endif %}
-                  {% endfor %}
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="float-end">
+				<button type="submit" form="form_epayco" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fas fa-save"></i></button>
+				<a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fas fa-reply"></i></a>
+			</div>
+			<h1>{{ heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li class="breadcrumb-item"><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if error_warning %}
+		<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> {{ error_warning }}
+			<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+		</div>
+		{% endif %}
+		<div class="card">
+			<div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+			<div class="card-body">
+				<form action="{{ save }}" method="post" enctype="multipart/form-data" id="form_payco" data-oc-toggle="ajax">
 
-                </select>
-                
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="input-sort-order">{{ entry_xpay_sort_order }}</label>
-              <div class="col-sm-10">
-                <input type="text" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="test_mode">{{ entry_test_mode }}</label>
-              <div class="col-sm-10">
-                <input type="hidden" name="test_mode" value='0' id="hidden_test_mode" />
-                <input type="checkbox" name="test_mode" value="1" id="test_mode" class="form-check form-check-input" />
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="type_checkout">{{ entry_type_checkout }}<span data-toggle="tooltip" title="{{ help_type_checkout }}"></span></label>
-              <div class="col-sm-10">
-                <input type="hidden" name="type_checkout" value='0' id="hidden_type_checkout" />
-                <input type="checkbox" name="type_checkout" value="1" id="type_checkout" class="form-check form-check-input" />
-                <span>(tipo de checkout)<span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-    </div>
-  </div>
+					<div class="tab-content">
+						<div class="tab-pane active" id="epayco_basic_configuration">
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_api_key">{{ payco_api_key }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="payment_payco_api_key" value="{{ payco_api_key_value }}" placeholder="{{ payco_api_key }}" id="input_api_key" class="form-control" />
+
+									</div>
+								</div>
+							</div>
+							
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_public_key">{{ payco_public_key }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="payment_payco_public_key" value="{{ payco_public_key_value }}" placeholder="{{ payco_public_key }}" id="input_public_key" class="form-control" />
+									</div>
+									<div class="form-text">{{ help_public_key }}</div>
+								</div>
+							</div>
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_p_key">{{ payco_p_key }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" name="payment_payco_p_key" value="{{ payco_p_key_value }}" placeholder="{{ payco_p_key }}" id="input_p_key" class="form-control" />
+									</div>
+									<div class="form-text">{{ help_p_key }}</div>
+								</div>
+							</div>
+					
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_dark_mode">{{ payco_dark_mode }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+                    <input type="checkbox" name="payco_dark_mode_value" {% if payco_dark_mode_value  %} checked {% endif %} id="input_dark_mode" class="form-check-input"/> <label for="input_dark_mode" class="form-check-label">{{ payco_dark_mode_label }}</label>
+									</div>
+									<div class="form-text">{{ help_dark_mode }}</div>
+								</div>
+							</div>
+
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input_test_mode">{{ payco_test_mode }}</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+                    <input type="checkbox" name="payco_test_mode" value="{{payco_test_mode_value }}" id="input_test_mode" class="form-check-input" {% if payco_test_mode_value  %} checked {% endif %} /> <label for="input_test_mode" class="form-check-label">{{ payco_test_mode_label }}</label>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
-<script>
-  if ({{test_mode}} == 1){
-    $('#test_mode').prop('checked', true);
-  }
-  if ({{type_checkout}} == 1){
-    $('#type_checkout').prop('checked', true);
-  }
-</script>
-{{ footer }}

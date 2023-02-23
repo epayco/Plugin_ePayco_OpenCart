@@ -1,4 +1,18 @@
 <?php
+$_['payco_basic_configuration'] = 'Basic Configuration';
+$_['payco_button_styling_configuration'] = 'Advanced Styling';
+$_['payco_api_key'] = 'P_CUST_ID_CLIENTE';
+$_['payco_p_cust_id'] = 'P_CUST_ID_CLIENTE';
+$_['payco_public_key'] = 'PUBLIC_KEY';
+$_['payco_p_key'] = 'P_KEY';
+$_['payco_dark_mode'] = 'Type checkout';
+$_['entry_type_checkout'] = 'Type checkout';
+$_['payco_dark_mode_label'] = 'Enable One page Checkout';
+$_['help_dark_mode'] = 'When this box is checked, the epayco buttons will be rendered in One page checkout';
+$_['payco_test_mode'] = 'Test Mode';
+$_['payco_test_mode_label'] = 'Enable test mode.';
+$_['help_test_mode'] = 'When test mode is enabled, only logged-in admin users will see the epayco Checkout button.';
+
 $_['heading_title']                      = 'ePayco';
 $_['text_extension']				     = 'Extensions';
 $_['text_success']				         = 'Success: You have modified ePayco account details!';

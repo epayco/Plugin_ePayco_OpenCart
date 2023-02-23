@@ -1,5 +1,9 @@
 <?php
-$_['text_title'] = 'Credit or Debit using Payco';
+$_['text_title']							= 'ePayco';
+$_['text_payco_express']					= 'epayco';
+$_['text_payco_card']						= 'epayco Card';
+$_['text_wait']								= 'Please wait!';
+$_['text_order_message']					= 'epayco Seller Protection - %s';
 $_['xpay_discription_one'] = 'This site uses Payco because it is fraud-proof and private! Download the app to ypur phone and create an account. It takes less than 3 minutes.';
 $_['xpay_discription_two'] = 'Just search for <b>Payco</b> where you get your apps!';
 $_['xpay_discription_three'] = 'Then choose how you want to pay...';
