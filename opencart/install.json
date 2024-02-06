@@ -1,8 +1,6 @@
 {
-  "name": "Payco",
-  "code": "Payco",
-  "license": "GPL",
-  "version": "4.0.0",
-  "author": "Payco",
-  "link": "http://world-xchange.com/"
-}
+	"name": "Epayco",
+	"version": "1.10",
+	"author": "Epayco",
+	"link": "https://epayco.com/"
+  }

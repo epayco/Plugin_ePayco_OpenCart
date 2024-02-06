@@ -9,7 +9,7 @@
   </div>
 </fieldset>
 <script type="text/javascript"
-        src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
+        src="https://checkout.epayco.co/checkout.js">
 </script>
 <script type="text/javascript"><!--
 $('#button-confirm').on('click', function () {
@@ -37,7 +37,6 @@ $('#button-confirm').on('click', function () {
       mobilephone_billing: "{{ billphone }}",
       email_billing: "{{ billemail }}"
     }
-  debugger
     $.ajax({
         url: 'index.php?route=extension/payco/payment/payco|createOrder&language={{ language }}',
         dataType: 'json',
@@ -50,7 +49,6 @@ $('#button-confirm').on('click', function () {
             $(element).prop('disabled', false).removeClass('loading');
         },
         success: function (json) {
-          debugger
             if (json['error']) {
                 $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
             }
