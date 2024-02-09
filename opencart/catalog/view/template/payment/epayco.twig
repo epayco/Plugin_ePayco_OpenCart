@@ -27,8 +27,8 @@ $('#button-confirm').on('click', function () {
         confirmation: "{{ p_url_confirmation }}",
         response: "{{ p_url_response }}",
         autoclick: "true",
-        //ip: "{{ ip }}",
-        //test: "{{ p_test_mode }}"
+        ip: "{{ ip }}",
+        test: "{{ p_test_mode }}"
     }
     const apiKey = "{{ payment_epayco_public_key }}";
     const privateKey = "{{ payment_epayco_private_key }}";
