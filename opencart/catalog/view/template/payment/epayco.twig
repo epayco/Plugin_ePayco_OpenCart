@@ -1,0 +1,101 @@
+
+<div class="d-inline-block pt-2 pd-2 w-100 text-end">
+  <button type="button" id="button-confirm" class="btn btn-primary">{{ button_confirm }}</button>
+</div>
+<script type="text/javascript"
+        src="https://checkout.epayco.co/checkout.js">
+</script>
+<script type="text/javascript"><!--
+$('#button-confirm').on('click', function () {
+	var handler = ePayco.checkout.configure({
+      key: "{{ payment_epayco_public_key }}",
+      test: "{{ p_test_mode }}"
+    });
+    var element = this;
+    var data={
+        name: "{{ p_itemname }}",
+        description: "{{ p_itemname }}",
+        invoice: "{{ p_id_invoice }}",
+        currency: "{{ p_currency_code }}",
+        amount: "{{ p_amount }}",
+        tax_base: "{{ p_amount_base }}",
+        tax: "{{ p_tax }}",
+        country: "{{ p_shiping_country }}",
+        lang: "{{ p_lang }}",
+        external: "{{ p_payco_checkout_type }}",
+        extra1: "{{ p_id_invoice }}",
+        confirmation: "{{ p_url_confirmation }}",
+        response: "{{ p_url_response }}",
+        autoclick: "true",
+        ip: "{{ ip }}",
+        test: "{{ p_test_mode }}"
+    }
+    const apiKey = "{{ payment_epayco_public_key }}";
+    const privateKey = "{{ payment_epayco_private_key }}";
+    var openChekout = function () {
+        if(localStorage.getItem("invoicePayment") == null){
+        localStorage.setItem("invoicePayment", data.invoice);
+            makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+        }else{
+            if(localStorage.getItem("invoicePayment") != data.invoice){
+                localStorage.removeItem("invoicePayment");
+                localStorage.setItem("invoicePayment", data.invoice);
+                    makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+            }else{
+                makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+            }
+        }
+    }
+    var makePayment = function (privatekey, apikey, info, external) {
+        const headers = { "Content-Type": "application/json" } ;
+        headers["privatekey"] = privatekey;
+        headers["apikey"] = apikey;
+        var payment =   function (){
+            return  fetch("https://cms.epayco.co/checkout/payment/session", {
+                method: "POST",
+                body: JSON.stringify(info),
+                headers
+            })
+                .then(res =>  res.json())
+                .catch(err => err);
+        }
+        payment()
+            .then(session => {
+                if(session.data.sessionId != undefined){
+                    localStorage.removeItem("sessionPayment");
+                    localStorage.setItem("sessionPayment", session.data.sessionId);
+                    const handlerNew = window.ePayco.checkout.configure({
+                        sessionId: session.data.sessionId,
+                        external: external,
+                    });
+                    handlerNew.openNew()
+                }
+            })
+            .catch(error => {
+                error.message;
+            });
+    }    
+    $.ajax({
+        url: 'index.php?route=extension/epayco/payment/epayco|confirm&language={{ language }}',
+        dataType: 'json',
+        beforeSend: function () {
+            $(element).prop('disabled', true).addClass('loading');
+        },
+        complete: function () {
+            $(element).prop('disabled', false).removeClass('loading');
+        },
+        success: function (json) {
+            if (json['error']) {
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+            }
+            //handler.open(data)
+            openChekout()
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
+//--></script>
+
+
