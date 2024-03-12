@@ -11,6 +11,9 @@ $('#button-confirm').on('click', function () {
       key: "{{ payment_epayco_public_key }}",
       test: "{{ p_test_mode }}"
     });
+    var extras_epayco = {
+        extra5: "P30"
+    }
     var element = this;
     var data={
         name: "{{ p_itemname }}",
@@ -28,7 +31,8 @@ $('#button-confirm').on('click', function () {
         response: "{{ p_url_response }}",
         autoclick: "true",
         ip: "{{ ip }}",
-        test: "{{ p_test_mode }}"
+        test: "{{ p_test_mode }}",
+        extras_epayco: extras_epayco
     }
     const apiKey = "{{ payment_epayco_public_key }}";
     const privateKey = "{{ payment_epayco_private_key }}";
@@ -69,6 +73,8 @@ $('#button-confirm').on('click', function () {
                         external: external,
                     });
                     handlerNew.openNew()
+                }else{
+                    handler.open(data)
                 }
             })
             .catch(error => {
@@ -88,8 +94,7 @@ $('#button-confirm').on('click', function () {
             if (json['error']) {
                 $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
             }
-            handler.open(data)
-            //openChekout()
+            openChekout()
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);

@@ -99,7 +99,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 
 			$data['p_url_confirmation'] = $this->url->link($this->extension_base_path.'|callback&comfirmation=1');
 
-			$data['p_url_response'] = $this->url->link($this->extension_base_path.'|callback');
+			$data['p_url_response'] = $this->url->link($this->extension_base_path.'|callback&response=1');
 
 
 			$data['customer_email'] = ($this->session->data['customer']['email']);
