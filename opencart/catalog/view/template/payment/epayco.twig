@@ -7,7 +7,7 @@
 </script>
 <script type="text/javascript"><!--
 $('#button-confirm').on('click', function () {
-	var handler = ePayco.checkout.configure({
+    var handler = ePayco.checkout.configure({
       key: "{{ payment_epayco_public_key }}",
       test: "{{ p_test_mode }}"
     });
@@ -69,7 +69,9 @@ $('#button-confirm').on('click', function () {
                         external: external,
                     });
                     handlerNew.openNew()
-                }
+                }else{
+		    handler.open(data)
+		}
             })
             .catch(error => {
                 error.message;
