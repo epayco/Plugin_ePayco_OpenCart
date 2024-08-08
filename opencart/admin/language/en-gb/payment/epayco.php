@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']      = 'ePayco';
+$_['heading_title']      = 'Paga con ePayco';
 
 // Text
 $_['text_extensions']     = 'Extensions';
