@@ -1,6 +1,8 @@
 <?php
 // Heading
-$_['heading_title']      = 'Paga con ePayco';
+
+$_['heading_title']      = 'ePayco: Paga con Tarjeta de crédito/débito nacional e internacional, PSE, Daviplata, Nequi, Paypal, Efectivo, Safetypay y muchos más.';
+
 
 // Text
 $_['text_extensions']     = 'Extensions';
