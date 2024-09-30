@@ -11,6 +11,7 @@ class Epayco extends \Opencart\System\Engine\Model
 	public function getMethods(array $address = []): array
 	{
 		$method_data = [];
+		
 		$this->load->language('extension/epayco/payment/epayco');
 		if(!empty($address)){
 			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int) $this->config->get('payment_epayco_geo_zone_id') . "' AND country_id = '" . (int) $address['country_id'] . "' AND (zone_id = '" . (int) $address['zone_id'] . "' OR zone_id = '0')");
