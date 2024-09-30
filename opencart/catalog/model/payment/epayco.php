@@ -8,7 +8,7 @@ class Epayco extends \Opencart\System\Engine\Model
 	 *
 	 * @return array
 	 */
-	public function getMethod(array $address = []): array
+	public function getMethods(array $address = []): array
 	{
 		$method_data = [];
 		$this->load->language('extension/epayco/payment/epayco');
