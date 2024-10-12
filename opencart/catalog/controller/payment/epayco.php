@@ -1,4 +1,5 @@
 <?php
+
 namespace Opencart\Catalog\Controller\Extension\Epayco\Payment;
 
 class Epayco extends \Opencart\System\Engine\Controller
@@ -36,16 +37,16 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$data['epayco_test_mode_value'] = $this->config->get('payment_epayco_test_mode');
 			$data['order_id'] = $this->session->data['order_id'];
 			$data['ip'] = $this->getCustomerIp();
-			
-			if ($data['epayco_test_mode_value']=='1'){
+
+			if ($data['epayco_test_mode_value'] == '1') {
 				$data['p_test_mode'] = 'true';
-			}else{
+			} else {
 				$data['p_test_mode'] = 'false';
 			}
 
-			if ($data['payment_epayco_type_checkout']=='1'){
+			if ($data['payment_epayco_type_checkout'] == '1') {
 				$data['p_payco_checkout_type'] = 'false';
-			}else{
+			} else {
 				$data['p_payco_checkout_type'] = 'true';
 			}
 
@@ -53,53 +54,54 @@ class Epayco extends \Opencart\System\Engine\Controller
 				$data['customer_telephone'] = ($this->session->data['customer']['telephone']);
 			}
 
-			$data['p_itemname']="";
+			$data['p_itemname'] = "";
 
 			foreach ($this->cart->getProducts() as $product) {
-				if(trim($product['name'])!=""){
-					if($data['p_itemname']==""){
-						$data['p_itemname']=$product['name'];
-					}else{
-						$data['p_itemname'] = $data['p_itemname'].",".$product['name'];
+				if (trim($product['name']) != "") {
+					if ($data['p_itemname'] == "") {
+						$data['p_itemname'] = $product['name'];
+					} else {
+						$data['p_itemname'] = $data['p_itemname'] . "," . $product['name'];
 					}
 				}
 			}
 
-			$data['p_id_invoice'] = $this->session->data['order_id'];
+			$data['p_id_invoice'] = (string)$this->session->data['order_id'] . "_op";
+			$data['extra1'] = $this->session->data['order_id'];
 
 			$data['p_currency_code'] = $order_info['currency_code'];;
 
 			$data['p_amount'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
 
 			$queryOrderEpayco = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_total WHERE order_id = '" . (int)$order_info['order_id'] . "'");
-			if(count($queryOrderEpayco->row)>0){
+			if (count($queryOrderEpayco->row) > 0) {
 				$queryOrder = $queryOrderEpayco;
-			}else{
+			} else {
 				$queryOrder = null;
 			}
-			$p_tax=0;
+			$p_tax = 0;
 			$p_amount_ = 0;
-			foreach ($queryOrder->rows as $orderData){
-				if($orderData['code'] == "tax"){
+			foreach ($queryOrder->rows as $orderData) {
+				if ($orderData['code'] == "tax") {
 					$p_tax +=  floatval($orderData['value']);
 				}
-		
-				if($orderData['code'] == "total"){
+
+				if ($orderData['code'] == "total") {
 					$p_amount_ +=  floatval($orderData['value']);
 				}
 			}
 			$p_amount_base = $p_amount_ - $p_tax;
 			$data['p_tax'] = $p_tax;
-			$data['p_amount_base']=$p_amount_base;
+			$data['p_amount_base'] = $p_amount_base;
 
-			$countryCode = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8')?html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8'): "CO";
+			$countryCode = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8') ? html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8') : "CO";
 			$data['p_shiping_country'] = $countryCode;
 
-			$data['p_lang'] = ( $this->config->get('config_language') === "en-gb" ) ? "en" : 'es';
+			$data['p_lang'] = ($this->config->get('config_language') === "en-gb") ? "en" : 'es';
 
-			$data['p_url_confirmation'] = $this->url->link($this->extension_base_path.'|callback&comfirmation=1');
+			$data['p_url_confirmation'] = $this->url->link($this->extension_base_path . '|callback&comfirmation=1');
 
-			$data['p_url_response'] = $this->url->link($this->extension_base_path.'|callback&response=1');
+			$data['p_url_response'] = $this->url->link($this->extension_base_path . '|callback&response=1');
 
 
 			$data['customer_email'] = ($this->session->data['customer']['email']);
@@ -521,7 +523,8 @@ class Epayco extends \Opencart\System\Engine\Controller
 		$this->response->setOutput(json_encode($data));
 	}
 
-	public function confirm(): void {
+	public function confirm(): void
+	{
 		$this->load->language('extension/epayco/payment/epayco');
 
 		$json = [];
@@ -551,7 +554,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 		$comfirmation = false;
 		if(isset($_GET['ref_payco'])){
 			$ref_payco = $_GET['ref_payco'];
-			$url="https://secure.epayco.co/validation/v1/reference/".$_GET['ref_payco'];
+			$url="https://secure.epayco.io/validation/v1/reference/".$_GET['ref_payco'];
 			$response=json_decode(file_get_contents($url));
 			$data = (array)$response->data;
 		}
@@ -639,25 +642,26 @@ class Epayco extends \Opencart\System\Engine\Controller
 		);
 	}
 
-	public function getCustomerIp(){
+
+	public function getCustomerIp()
+	{
 		$ipaddress = '';
 		if (isset($_SERVER['HTTP_CLIENT_IP']))
 			$ipaddress = $_SERVER['HTTP_CLIENT_IP'];
-		else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+		else if (isset($_SERVER['HTTP_X_FORWARDED_FOR']))
 			$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		else if(isset($_SERVER['HTTP_X_FORWARDED']))
+		else if (isset($_SERVER['HTTP_X_FORWARDED']))
 			$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
-		else if(isset($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']))
+		else if (isset($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']))
 			$ipaddress = $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
-		else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+		else if (isset($_SERVER['HTTP_FORWARDED_FOR']))
 			$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
-		else if(isset($_SERVER['HTTP_FORWARDED']))
+		else if (isset($_SERVER['HTTP_FORWARDED']))
 			$ipaddress = $_SERVER['HTTP_FORWARDED'];
-		else if(isset($_SERVER['REMOTE_ADDR']))
+		else if (isset($_SERVER['REMOTE_ADDR']))
 			$ipaddress = $_SERVER['REMOTE_ADDR'];
 		else
 			$ipaddress = 'UNKNOWN';
 		return $ipaddress;
 	}
-
 }
