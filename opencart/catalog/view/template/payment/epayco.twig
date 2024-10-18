@@ -1,4 +1,3 @@
-
 <div class="d-inline-block pt-2 pd-2 w-100 text-end">
   <button type="button" id="button-confirm" class="btn btn-primary">{{ button_confirm }}</button>
 </div>
@@ -26,7 +25,7 @@ $('#button-confirm').on('click', function () {
         country: "{{ p_shiping_country }}",
         lang: "{{ p_lang }}",
         external: "{{ p_payco_checkout_type }}",
-        extra1: "{{ p_id_invoice }}",
+        extra1: "{{ extra1 }}",
         confirmation: "{{ p_url_confirmation }}",
         response: "{{ p_url_response }}",
         autoclick: "true",
@@ -102,5 +101,3 @@ $('#button-confirm').on('click', function () {
     });
 });
 //--></script>
-
-

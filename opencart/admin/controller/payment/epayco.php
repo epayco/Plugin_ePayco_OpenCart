@@ -71,7 +71,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 		$data['payment_epayco_status'] = $this->config->get('payment_epayco_status');
 		$data['payment_epayco_sort_order'] = $this->config->get('payment_epayco_sort_order');
 
-
+		$data['HTTP_CATALOG'] = HTTP_CATALOG;
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
