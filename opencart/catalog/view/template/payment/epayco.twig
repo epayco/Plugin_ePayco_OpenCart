@@ -2,7 +2,7 @@
   <button type="button" id="button-confirm" class="btn btn-primary">{{ button_confirm }}</button>
 </div>
 <script type="text/javascript"
-        src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
+        src="https://checkout.epayco.co/checkout.js">
 </script>
 <script type="text/javascript"><!--
 $('#button-confirm').on('click', function () {
@@ -54,7 +54,7 @@ $('#button-confirm').on('click', function () {
         headers["privatekey"] = privatekey;
         headers["apikey"] = apikey;
         var payment =   function (){
-            return  fetch("https://cms.epayco.io/checkout/payment/session", {
+            return  fetch("https://cms.epayco.co/checkout/payment/session", {
                 method: "POST",
                 body: JSON.stringify(info),
                 headers
