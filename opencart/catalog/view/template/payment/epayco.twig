@@ -31,7 +31,8 @@ $('#button-confirm').on('click', function () {
         autoclick: "true",
         ip: "{{ ip }}",
         test: "{{ p_test_mode }}",
-        extras_epayco: extras_epayco
+        extras_epayco: extras_epayco,
+		checkout_version: 2
     }
     const apiKey = "{{ payment_epayco_public_key }}";
     const privateKey = "{{ payment_epayco_private_key }}";
