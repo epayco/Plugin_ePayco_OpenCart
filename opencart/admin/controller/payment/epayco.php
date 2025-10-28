@@ -1,7 +1,7 @@
 <?php
 namespace Opencart\Admin\Controller\Extension\Opencart\Payment;
 /**
- * Class Cod
+ * Class Epayco
  *
  * @package Opencart\Admin\Controller\Extension\Opencart\Payment
  */
