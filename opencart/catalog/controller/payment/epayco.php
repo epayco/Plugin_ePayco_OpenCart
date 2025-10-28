@@ -1,19 +1,23 @@
 <?php
 
-namespace Opencart\Catalog\Controller\Extension\Epayco\Payment;
-
+namespace Opencart\Catalog\Controller\Extension\Opencart\Payment;
+/**
+ * Class Epayco
+ *
+ * @package Opencart\Catalog\Controller\Extension\Opencart\Payment
+ */
 class Epayco extends \Opencart\System\Engine\Controller
 {
 	private $error = [];
-	private $extension_base_path = 'extension/epayco/payment/epayco';
+	private $extension_base_path = 'extension/opencart/payment/epayco';
 
 
 	public function index(): string
 	{
 		if ($this->config->get('payment_epayco_api_key')) {
-			$this->load->language('extension/epayco/payment/epayco');
+			$this->load->language('extension/opencart/payment/epayco');
 			$this->load->model('checkout/cart');
-			$this->load->model('extension/epayco/payment/epayco');
+			$this->load->model('extension/opencart/payment/epayco');
 			$this->load->model('localisation/country');
 			$this->load->model('checkout/order');
 
@@ -39,15 +43,15 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$data['ip'] = $this->getCustomerIp();
 
 			if ($data['epayco_test_mode_value'] == '1') {
-				$data['p_test_mode'] = 'true';
+				$data['p_test_mode'] = true;
 			} else {
-				$data['p_test_mode'] = 'false';
+				$data['p_test_mode'] = false;
 			}
 
 			if ($data['payment_epayco_type_checkout'] == '1') {
-				$data['p_payco_checkout_type'] = 'false';
+				$data['p_payco_checkout_type'] = 'onepage';
 			} else {
-				$data['p_payco_checkout_type'] = 'true';
+				$data['p_payco_checkout_type'] = 'standard';
 			}
 
 			if (isset($this->session->data['customer']['telephone'])) {
@@ -146,7 +150,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$data['message_amount'] = number_format($sub_total * 2, 2, '.', '');
 
 
-			return $this->load->view('extension/epayco/payment/epayco', $data);
+			return $this->load->view('extension/opencart/payment/epayco', $data);
 		}
 
 		return '';
@@ -154,9 +158,9 @@ class Epayco extends \Opencart\System\Engine\Controller
 
 	public function approveOrder(): void
 	{
-		$this->load->language('extension/epayco/payment/epayco');
+		$this->load->language('extension/opencart/payment/epayco');
 
-		$this->load->model('extension/epayco/payment/epayco');
+		$this->load->model('extension/opencart/payment/epayco');
 		$this->load->model('checkout/order');
 
 		// Setting
@@ -525,7 +529,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 
 	public function confirm(): void
 	{
-		$this->load->language('extension/epayco/payment/epayco');
+		$this->load->language('extension/opencart/payment/epayco');
 
 		$json = [];
 

@@ -1,12 +1,17 @@
 <?php
-namespace Opencart\Admin\Controller\Extension\Epayco\Payment;
+namespace Opencart\Admin\Controller\Extension\Opencart\Payment;
+/**
+ * Class Cod
+ *
+ * @package Opencart\Admin\Controller\Extension\Opencart\Payment
+ */
 class Epayco extends \Opencart\System\Engine\Controller
 {
 	private $error = [];
 
 	public function index(): void
 	{
-		$this->load->language('extension/epayco/payment/epayco');
+		$this->load->language('extension/opencart/payment/epayco');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -24,10 +29,10 @@ class Epayco extends \Opencart\System\Engine\Controller
 
 		$data['breadcrumbs'][] = [
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/epayco/payment/epayco', 'user_token=' . $this->session->data['user_token'])
+			'href' => $this->url->link('extension/opencart/payment/epayco', 'user_token=' . $this->session->data['user_token'])
 		];
 
-		$data['save'] = $this->url->link('extension/epayco/payment/epayco|save', 'user_token=' . $this->session->data['user_token']);
+		$data['save'] = $this->url->link('extension/opencart/payment/epayco|save', 'user_token=' . $this->session->data['user_token']);
 		$data['back'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment');
 
 		$data['payment_epayco_order_status_id'] = $this->config->get('payment_epayco_order_status_id');
@@ -36,9 +41,9 @@ class Epayco extends \Opencart\System\Engine\Controller
 
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 
-		$data['partner_url'] = str_replace('&amp;', '%26', $this->url->link('extension/epayco/payment/epayco', 'user_token=' . $this->session->data['user_token']));
-		$data['callback_url'] = str_replace('&amp;', '&', $this->url->link('extension/epayco/payment/epayco|callback', 'user_token=' . $this->session->data['user_token']));
-		$data['disconnect_url'] = str_replace('&amp;', '&', $this->url->link('extension/epayco/payment/epayco|disconnect', 'user_token=' . $this->session->data['user_token']));
+		$data['partner_url'] = str_replace('&amp;', '%26', $this->url->link('extension/opencart/payment/epayco', 'user_token=' . $this->session->data['user_token']));
+		$data['callback_url'] = str_replace('&amp;', '&', $this->url->link('extension/opencart/payment/epayco|callback', 'user_token=' . $this->session->data['user_token']));
+		$data['disconnect_url'] = str_replace('&amp;', '&', $this->url->link('extension/opencart/payment/epayco|disconnect', 'user_token=' . $this->session->data['user_token']));
 
 		if ($this->config->get('payment_epayco_api_key')) {
 			$data['payment_epayco_api_key'] = $this->config->get('payment_epayco_api_key');
@@ -76,14 +81,14 @@ class Epayco extends \Opencart\System\Engine\Controller
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('extension/epayco/payment/epayco', $data));
+		$this->response->setOutput($this->load->view('extension/opencart/payment/epayco', $data));
 	}
 
 	public function save(): void
 	{
-		$this->load->language('extension/epayco/payment/epayco');
+		$this->load->language('extension/opencart/payment/epayco');
 
-		if (!$this->user->hasPermission('modify', 'extension/epayco/payment/epayco')) {
+		if (!$this->user->hasPermission('modify', 'extension/opencart/payment/epayco')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
