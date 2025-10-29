@@ -1,6 +1,12 @@
 <?php
 namespace Opencart\Catalog\Model\Extension\Epayco\Payment;
-
+/**
+ * Class Epayco
+ *
+ * Can be called from $this->load->model('extension/epayco/payment/epayco');
+ *
+ * @package Opencart\Catalog\Model\Extension\Epayco\Payment
+ */
 class Epayco extends \Opencart\System\Engine\Model
 {
     /**

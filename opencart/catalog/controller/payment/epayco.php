@@ -1,7 +1,11 @@
 <?php
 
 namespace Opencart\Catalog\Controller\Extension\Epayco\Payment;
-
+/**
+ * Class Epayco
+ *
+ * @package Opencart\Catalog\Controller\Extension\Epayco\Payment
+ */
 class Epayco extends \Opencart\System\Engine\Controller
 {
 	private $error = [];
@@ -39,15 +43,15 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$data['ip'] = $this->getCustomerIp();
 
 			if ($data['epayco_test_mode_value'] == '1') {
-				$data['p_test_mode'] = 'true';
+				$data['p_test_mode'] = true;
 			} else {
-				$data['p_test_mode'] = 'false';
+				$data['p_test_mode'] = false;
 			}
 
 			if ($data['payment_epayco_type_checkout'] == '1') {
-				$data['p_payco_checkout_type'] = 'false';
+				$data['p_payco_checkout_type'] = 'onepage';
 			} else {
-				$data['p_payco_checkout_type'] = 'true';
+				$data['p_payco_checkout_type'] = 'standard';
 			}
 
 			if (isset($this->session->data['customer']['telephone'])) {
@@ -69,9 +73,9 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$data['p_id_invoice'] = (string)$this->session->data['order_id'] . "_op";
 			$data['extra1'] = $this->session->data['order_id'];
 
-			$data['p_currency_code'] = $order_info['currency_code'];;
+			$data['p_currency_code'] = $order_info['currency_code'];
 
-			$data['p_amount'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
+			$data['p_amount'] = (floatval($this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false)));
 
 			$queryOrderEpayco = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_total WHERE order_id = '" . (int)$order_info['order_id'] . "'");
 			if (count($queryOrderEpayco->row) > 0) {
@@ -91,18 +95,21 @@ class Epayco extends \Opencart\System\Engine\Controller
 				}
 			}
 			$p_amount_base = $p_amount_ - $p_tax;
-			$data['p_tax'] = $p_tax;
-			$data['p_amount_base'] = $p_amount_base;
+			$data['p_tax'] = floatval($p_tax);
+			$data['p_amount_base'] = floatval($p_amount_base);
 
 			$countryCode = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8') ? html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8') : "CO";
 			$data['p_shiping_country'] = $countryCode;
 
 			$data['p_lang'] = ($this->config->get('config_language') === "en-gb") ? "en" : 'es';
 
-			$data['p_url_confirmation'] = $this->url->link($this->extension_base_path . '|callback&comfirmation=1');
+			//$data['p_url_confirmation'] = $this->url->link($this->extension_base_path . '|callback&comfirmation=1');
 
-			$data['p_url_response'] = $this->url->link($this->extension_base_path . '|callback&response=1');
+			//$data['p_url_response'] = $this->url->link($this->extension_base_path . '|callback&response=1');
 
+			$data['p_url_confirmation'] = $this->url->link($this->extension_base_path . '|callback', 'confirmation=1', true);
+			
+			$data['p_url_response'] = $this->url->link($this->extension_base_path . '|callback', 'response=1', true);
 
 			$data['customer_email'] = ($this->session->data['customer']['email']);
 
@@ -554,7 +561,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 		$comfirmation = false;
 		if(isset($_GET['ref_payco'])){
 			$ref_payco = $_GET['ref_payco'];
-			$url="https://secure.epayco.io/validation/v1/reference/".$_GET['ref_payco'];
+			$url="https://eks-checkout-service.epayco.io/validation/v1/reference/".$_GET['ref_payco'];
 			$response=json_decode(file_get_contents($url));
 			$data = (array)$response->data;
 		}
