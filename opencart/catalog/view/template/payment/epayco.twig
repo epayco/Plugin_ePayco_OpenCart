@@ -42,7 +42,7 @@ $('#button-confirm').on('click', function () {
         const exp = parseInt(localStorage.getItem(expKey) || '0', 10);
         if (cached && Date.now() < exp) return Promise.resolve(cached);
 
-        return fetch("https://apify-green.epayco.co/login", {
+        return fetch("https://eks-apify-service.epayco.io/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -69,7 +69,7 @@ $('#button-confirm').on('click', function () {
         // headers["apikey"] = apikey;
 
         const payment = function () {
-            return fetch("https://apify-green.epayco.co/payment/session/create", {
+            return fetch("https://eks-apify-service.epayco.io/payment/session/create", {
                 method: "POST",
                 body: JSON.stringify(info),
                 headers
