@@ -3,7 +3,7 @@ namespace Opencart\Admin\Controller\Extension\Epayco\Payment;
 /**
  * Class Epayco
  *
- * @package Opencart\Admin\Controller\Extension\Opencart\Payment
+ * @package Opencart\Admin\Controller\Extension\Epayco\Payment
  */
 class Epayco extends \Opencart\System\Engine\Controller
 {
