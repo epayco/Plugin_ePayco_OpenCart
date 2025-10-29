@@ -73,9 +73,9 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$data['p_id_invoice'] = (string)$this->session->data['order_id'] . "_op";
 			$data['extra1'] = $this->session->data['order_id'];
 
-			$data['p_currency_code'] = $order_info['currency_code'];;
+			$data['p_currency_code'] = $order_info['currency_code'];
 
-			$data['p_amount'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
+			$data['p_amount'] = (floatval($this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false)));
 
 			$queryOrderEpayco = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_total WHERE order_id = '" . (int)$order_info['order_id'] . "'");
 			if (count($queryOrderEpayco->row) > 0) {
@@ -95,18 +95,21 @@ class Epayco extends \Opencart\System\Engine\Controller
 				}
 			}
 			$p_amount_base = $p_amount_ - $p_tax;
-			$data['p_tax'] = $p_tax;
-			$data['p_amount_base'] = $p_amount_base;
+			$data['p_tax'] = floatval($p_tax);
+			$data['p_amount_base'] = floatval($p_amount_base);
 
 			$countryCode = html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8') ? html_entity_decode($order_info['shipping_iso_code_2'], ENT_QUOTES, 'UTF-8') : "CO";
 			$data['p_shiping_country'] = $countryCode;
 
 			$data['p_lang'] = ($this->config->get('config_language') === "en-gb") ? "en" : 'es';
 
-			$data['p_url_confirmation'] = $this->url->link($this->extension_base_path . '|callback&comfirmation=1');
+			//$data['p_url_confirmation'] = $this->url->link($this->extension_base_path . '|callback&comfirmation=1');
 
-			$data['p_url_response'] = $this->url->link($this->extension_base_path . '|callback&response=1');
+			//$data['p_url_response'] = $this->url->link($this->extension_base_path . '|callback&response=1');
 
+			$data['p_url_confirmation'] = $this->url->link($this->extension_base_path . '|callback', 'confirmation=1', true);
+			
+			$data['p_url_response'] = $this->url->link($this->extension_base_path . '|callback', 'response=1', true);
 
 			$data['customer_email'] = ($this->session->data['customer']['email']);
 
