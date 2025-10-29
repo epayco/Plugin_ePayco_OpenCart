@@ -51,7 +51,7 @@ Luego de configurar los campos presione el botón **Save**. Y con esto quedara i
 <img src="ImgTutorialOpenCart/tuto-4.jpg" width="400px"/>
 
 ## Versiones
-* [ePayco plugin OpenCart v4.0.2](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/4.1.0).
+* [ePayco plugin OpenCart v4.1.0](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/4.1.0).
 * [ePayco plugin OpenCart v4.0.2](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/4.0.2).
 * [ePayco plugin OpenCart v4.0.1](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/4.0.1).
 * [ePayco plugin OpenCart v4.0](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/4.0.0.0).
