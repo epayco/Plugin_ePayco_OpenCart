@@ -55,7 +55,7 @@ $('#button-confirm').on('click', function () {
         .then(json => {
             const token = json.token || json.access_token;
             if (!token) throw new Error("No se recibió token");
-            const ttlMs = (json.expires_in ? Number(json.expires_in) * 1000 : 5 * 60 * 1000);
+            const ttlMs = (14 * 60 * 1000) - 15000;
             localStorage.setItem(cacheKey, token);
             localStorage.setItem(expKey, String(Date.now() + ttlMs));
             return token;
