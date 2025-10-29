@@ -1,23 +1,23 @@
 <?php
 
-namespace Opencart\Catalog\Controller\Extension\Opencart\Payment;
+namespace Opencart\Catalog\Controller\Extension\Epayco\Payment;
 /**
  * Class Epayco
  *
- * @package Opencart\Catalog\Controller\Extension\Opencart\Payment
+ * @package Opencart\Catalog\Controller\Extension\Epayco\Payment
  */
 class Epayco extends \Opencart\System\Engine\Controller
 {
 	private $error = [];
-	private $extension_base_path = 'extension/opencart/payment/epayco';
+	private $extension_base_path = 'extension/epayco/payment/epayco';
 
 
 	public function index(): string
 	{
 		if ($this->config->get('payment_epayco_api_key')) {
-			$this->load->language('extension/opencart/payment/epayco');
+			$this->load->language('extension/epayco/payment/epayco');
 			$this->load->model('checkout/cart');
-			$this->load->model('extension/opencart/payment/epayco');
+			$this->load->model('extension/epayco/payment/epayco');
 			$this->load->model('localisation/country');
 			$this->load->model('checkout/order');
 
@@ -150,7 +150,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$data['message_amount'] = number_format($sub_total * 2, 2, '.', '');
 
 
-			return $this->load->view('extension/opencart/payment/epayco', $data);
+			return $this->load->view('extension/epayco/payment/epayco', $data);
 		}
 
 		return '';
@@ -158,9 +158,9 @@ class Epayco extends \Opencart\System\Engine\Controller
 
 	public function approveOrder(): void
 	{
-		$this->load->language('extension/opencart/payment/epayco');
+		$this->load->language('extension/epayco/payment/epayco');
 
-		$this->load->model('extension/opencart/payment/epayco');
+		$this->load->model('extension/epayco/payment/epayco');
 		$this->load->model('checkout/order');
 
 		// Setting
@@ -529,7 +529,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 
 	public function confirm(): void
 	{
-		$this->load->language('extension/opencart/payment/epayco');
+		$this->load->language('extension/epayco/payment/epayco');
 
 		$json = [];
 

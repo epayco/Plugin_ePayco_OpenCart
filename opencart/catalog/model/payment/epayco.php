@@ -1,11 +1,11 @@
 <?php
-namespace Opencart\Catalog\Model\Extension\Opencart\Payment;
+namespace Opencart\Catalog\Model\Extension\Epayco\Payment;
 /**
  * Class Epayco
  *
- * Can be called from $this->load->model('extension/opencart/payment/epayco');
+ * Can be called from $this->load->model('extension/epayco/payment/epayco');
  *
- * @package Opencart\Catalog\Model\Extension\Opencart\Payment
+ * @package Opencart\Catalog\Model\Extension\Epayco\Payment
  */
 class Epayco extends \Opencart\System\Engine\Model
 {
@@ -19,7 +19,7 @@ class Epayco extends \Opencart\System\Engine\Model
         $method_data = [];
 
         
-        $this->load->language('extension/opencart/payment/epayco');
+        $this->load->language('extension/epayco/payment/epayco');
 
         if (!empty($address)) {
             
