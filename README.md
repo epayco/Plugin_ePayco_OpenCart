@@ -19,7 +19,7 @@
 ## Instalación
 
 1. [Descarga el plugin.](https://github.com/epayco/Plugin_ePayco_OpenCart/releases)
-2. Debes descomprimir el plugin y navegar hasta la carpeta que dice **opencart**, selecciona las carpetas que se encuentran en esa ubicación y luego debes comprimirlas en un archivo llamado **epayco.ocmod.zip**.
+2. Debes descomprimir el plugin y navegar hasta la carpeta que dice **opencart**, selecciona las carpetas que se encuentran en esa ubicación y el archivo install.json y luego debes comprimirlas en un archivo llamado **epayco.ocmod.zip**.
 3. Ingresa al panel de administración de tu tienda de opencart, ingresas a **Extensions**  y en **installer** subes el archivo **epayco.ocmod.zip** y luego lo instalas desde el boton verde.
 
 ## Configuración
