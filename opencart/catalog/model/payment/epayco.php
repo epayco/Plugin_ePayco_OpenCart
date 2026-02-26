@@ -38,9 +38,15 @@ class Epayco extends \Opencart\System\Engine\Model
 
            
             if ($status) {
+                $option_data['epayco'] = [
+                    'code' => 'epayco.epayco',
+                    'name' => $this->language->get('heading_title')
+                ];
                 $method_data = [
                     'code'       => 'epayco',
-                    'title'      => $this->language->get('heading_title'),
+                    'name'       => $this->language->get('heading_title'),
+                    'option'     => $option_data,
+                    //'title'      => $this->language->get('heading_title'),
                     'sort_order' => $this->config->get('payment_epayco_sort_order')
                 ];
             }
