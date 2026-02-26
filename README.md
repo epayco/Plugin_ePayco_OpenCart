@@ -65,6 +65,8 @@ Luego de configurar los campos presione el botón **Save**. Y con esto quedara i
 <img src="ImgTutorialOpenCart/tuto-4.png" width="400px"/>
 <img src="ImgTutorialOpenCart/tuto-5.png" width="400px"/>
 <img src="ImgTutorialOpenCart/tuto-6.png" width="400px"/>
+<img src="ImgTutorialOpenCart/tuto-7.png" width="400px"/>
+<img src="ImgTutorialOpenCart/tuto-8.png" width="400px"/>
 
 ## Versiones
 * [ePayco plugin OpenCart v4.2.0](https://github.com/epayco/Plugin_ePayco_OpenCart/releases/tag/4.2.0).
