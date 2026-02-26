@@ -561,7 +561,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 		$comfirmation = false;
 		if(isset($_GET['ref_payco'])){
 			$ref_payco = $_GET['ref_payco'];
-			$url="https://eks-checkout-service.epayco.io/validation/v1/reference/".$_GET['ref_payco'];
+			$url="https://eks-ms-checkout-transaction-service.epayco.io/validation/v1/reference/".$_GET['ref_payco'];
 			$response=json_decode(file_get_contents($url));
 			$data = (array)$response->data;
 		}
