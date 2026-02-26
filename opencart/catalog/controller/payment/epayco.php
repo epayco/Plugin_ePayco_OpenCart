@@ -547,9 +547,10 @@ class Epayco extends \Opencart\System\Engine\Controller
 		if (!$json) {
 			$this->load->model('checkout/order');
 
-			$this->model_checkout_order->addHistory($this->session->data['order_id'], $this->config->get('payment_epayco_order_status_id'));
+			$this->model_checkout_order->addHistory($this->session->data['order_id'], 1);
 
 			$json['redirect'] = $this->url->link('checkout/success', 'language=' . $this->config->get('config_language'), true);
+			$json['orderId'] = $this->session->data['order_id'];
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -557,19 +558,24 @@ class Epayco extends \Opencart\System\Engine\Controller
 	}
 
 	public function callback() {
+		try{
 		$this->load->model('checkout/order');
 		$comfirmation = false;
 		if(isset($_GET['ref_payco'])){
 			$ref_payco = $_GET['ref_payco'];
-			$url="https://eks-ms-checkout-transaction-service.epayco.io/validation/v1/reference/".$_GET['ref_payco'];
+			$url="https://eks-checkout-service.epayco.io/validation/v1/reference/".$_GET['ref_payco'];
 			$response=json_decode(file_get_contents($url));
+
 			$data = (array)$response->data;
+			$success = $response->success;
 		}
 		if(isset($_POST['x_ref_payco'])){
 			$data = $_REQUEST;
 			$comfirmation = true;
+			$success = true;
 		}
-		if($data){
+
+		if($data && isset($success)){
 			$x_ref_payco = $data['x_ref_payco'];
 			$x_transaction_id = $data['x_transaction_id'];
 			$x_amount = $data['x_amount'];
@@ -602,33 +608,58 @@ class Epayco extends \Opencart\System\Engine\Controller
 							if($orderStatus == 'Processed' ||$orderStatus == 'Complete' ){}else{
 								 $this->model_checkout_order->addHistory($order_id, $orderStatusFinal);
 							}
+							if(!$comfirmation){
+            					$this->response->redirect($this->url->link('checkout/success'));
+            				}else{
+            					echo 'success payment Complete' ;
+            				}
 						}
 					}break;
-					case 2:{
+					case 2: case 4: case 10: case 11:   
+					    {
 						if ($orderStatus != 'Canceled'){
 							$this->model_checkout_order->addHistory($order_id, 7);
 						}
+						if(!$comfirmation){
+        					$this->response->redirect($this->url->link('checkout/failure'));
+        				}else{
+        					echo 'success payment Canceled' ;
+        				}
 					}break;
-					case 3:{
+					 case 3: case 7:{
 						if ($orderStatus != 'Pending'){
 							$this->model_checkout_order->addHistory($order_id, 1);
 						}
+						if(!$comfirmation){
+        					$this->response->redirect($this->url->link('checkout/success'));
+        				}else{
+        					echo 'success payment Pending' ;
+        				}
 					}break;
 					default:{
 						$this->model_checkout_order->addHistory($order_id, 10);
+						if(!$comfirmation){
+        					$this->response->redirect($this->url->link('checkout/failure'));
+        				}else{
+        					echo 'success payment Canceled' ;
+        				}
 					}break;
 				}
-				if(!$comfirmation){
-					$this->response->redirect($this->url->link('checkout/success'));
-				}else{
-					echo 'success';
-				}
-	
 			}else{
-				$this->model_checkout_order->addHistory($order_id, 10);
 				$this->response->redirect($this->url->link('checkout/failure'));
 			}
 		}else{
+		    //$this->model_checkout_order->addHistory($order_id, 10);
+			$this->response->redirect($this->url->link('checkout/failure'));
+		}
+		if($comfirmation){
+		   $this->response->addHeader('Content-Type: application/json');
+		   $this->response->setOutput(json_encode([
+		       "success" => true,
+		       "message" => 'confirm successfull'
+		       ])); 
+		}
+		}catch(\Exception $e){
 			$this->response->redirect($this->url->link('checkout/failure'));
 		}
 	
