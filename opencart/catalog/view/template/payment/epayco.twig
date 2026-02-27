@@ -1,0 +1,117 @@
+<div class="text-end">
+  <button type="button" id="button-confirm" class="btn btn-primary">{{ button_confirm }}</button>
+</div>
+<script type="text/javascript"
+    src="https://checkout.epayco.co/checkout-green-v2.js">
+</script>
+<script type="text/javascript"><!--
+$('#button-confirm').on('click', function () {
+    var element = this;
+    var data={
+        name: "{{ p_itemname }}",
+        description: "{{ p_itemname }}",
+        invoice: "{{ p_id_invoice }}",
+        currency: "{{ p_currency_code }}",
+        amount: {{ p_amount|json_encode|raw }},
+        taxBase: {{ p_amount_base|json_encode|raw }},
+        tax: {{ p_tax|json_encode|raw }},
+        country: "{{ p_shiping_country }}",
+        lang: "{{ p_lang }}",
+        extras: {
+            extra1: "{{ extra1 }}",
+        },
+        confirmation: "{{ p_url_confirmation }}",
+        response: "{{ p_url_response }}",
+        ip: "{{ ip }}",
+        test:{{ p_test_mode ? 'true' : 'false' }},
+        extrasEpayco: {
+            extra5:"P30"
+        },
+        checkout_version: "2",
+    }
+    const apiKey = "{{ payment_epayco_public_key }}";
+    const privateKey = "{{ payment_epayco_private_key }}";
+    var openChekout = function () {
+        makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+    }
+        // Obtiene y cachea el bearer token
+    const getBearerToken = (priv, pub) => {
+        const cacheKey = 'epaycoBearer';
+        const expKey = cacheKey + ':exp';
+        const cached = localStorage.getItem(cacheKey);
+        const exp = parseInt(localStorage.getItem(expKey) || '0', 10);
+        if (cached && Date.now() < exp) return Promise.resolve(cached);
+
+        return fetch("https://apify-green.epayco.co/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Basic " + btoa(`${pub}:${priv}`)
+            }
+        })
+        .then(r => r.json())
+        .then(json => {
+            const token = json.token || json.access_token;
+            if (!token) throw new Error("No se recibió token");
+            const ttlMs = (14 * 60 * 1000) - 15000;
+            localStorage.setItem(cacheKey, token);
+            localStorage.setItem(expKey, String(Date.now() + ttlMs));
+            return token;
+        });
+    };
+
+    var makePayment = function (privatekey, apikey, info, external) {
+        const headers = { "Content-Type": "application/json" };
+        const payment = function () {
+            return fetch("https://apify-green.epayco.co/payment/session/create", {
+                method: "POST",
+                body: JSON.stringify(info),
+                headers
+            })
+            .then(res => res.json());
+        };
+        return getBearerToken(privatekey, apikey)
+            .then(token => {
+                headers["Authorization"] = "Bearer " + token;
+                return payment();
+            })
+            .then(session => {
+                if (session.data && session.data.sessionId) {
+                    localStorage.removeItem("sessionPayment");
+                    localStorage.setItem("sessionPayment", session.data.sessionId);
+                    const handlerNew = window.ePayco.checkout.configure({
+                        sessionId: session.data.sessionId,
+                        type: "{{ p_payco_checkout_type }}",
+                        test: {{ p_test_mode|json_encode|raw }},
+                    });
+                    handlerNew.open();
+                } else {
+                    $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> No pudimos Procesar tu pago <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> Error autenticando o creando la sesión <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+            });
+    } 
+    $.ajax({
+        url: 'index.php?route=extension/epayco/payment/epayco|confirm&language={{ language }}',
+        dataType: 'json',
+        beforeSend: function () {
+            $(element).prop('disabled', true).addClass('loading');
+        },
+        complete: function () {
+            $(element).prop('disabled', false).removeClass('loading');
+        },
+        success: function (json) {
+            if (json['error']) {
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+            }
+            openChekout()
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
+//--></script>
