@@ -561,6 +561,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 		try{
 		$this->load->model('checkout/order');
 		$comfirmation = false;
+		$data = '';
 		if(isset($_GET['ref_payco'])){
 			$ref_payco = $_GET['ref_payco'];
 			$url="https://secure.epayco.co/validation/v1/reference/".$_GET['ref_payco'];
@@ -574,19 +575,19 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$comfirmation = true;
 			$success = true;
 		}
-
+        
 		if($data && isset($success)){
-			$x_ref_payco = $data['x_ref_payco'];
-			$x_transaction_id = $data['x_transaction_id'];
-			$x_amount = $data['x_amount'];
-			$x_currency_code = $data['x_currency_code'];
-			$x_signature = $data['x_signature'];
+			$x_ref_payco = trim($data['x_ref_payco']);
+			$x_transaction_id = trim($data['x_transaction_id']);
+			$x_amount = trim($data['x_amount']);
+			$x_currency_code = trim($data['x_currency_code']);
+			$x_signature = trim($data['x_signature']);
 			$signature = $this->validateSignature($x_ref_payco,$x_transaction_id,$x_amount,$x_currency_code);
-			$x_cod_response=$data['x_cod_response'];
-			$isTest=$data['x_test_request'];
-			$x_test_request = $data['x_test_request'];
-			$x_approval_code = $data['x_approval_code'];
-			$x_cod_transaction_state = $data['x_cod_transaction_state'];
+			$x_cod_response=trim($data['x_cod_response']);
+			$isTest=trim($data['x_test_request']);
+			$x_test_request = trim($data['x_test_request']);
+			$x_approval_code = trim($data['x_approval_code']);
+			$x_cod_transaction_state = trim($data['x_cod_transaction_state']);
 			if($isTest == "TRUE"){
 				$isTest_= 1;
 			}else{
@@ -596,11 +597,13 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$order_info = $this->model_checkout_order->getOrder($order_id);
 			$orderStatus = $order_info['order_status'];
 			$data_p_amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
-	
+	        
+        $valid = (float)$x_amount == $data_p_amount;
 			if($x_signature==$signature){
 				switch ((int)$x_cod_response) {
 					case 1:{
-						if ($orderStatus != 'Pending' ||
+						if (
+						    //$orderStatus != 'Pending' ||
 							$orderStatus != 'Complete'||
 							$orderStatus != 'Processing'||
 							$orderStatus != 'Processed'){
@@ -611,7 +614,12 @@ class Epayco extends \Opencart\System\Engine\Controller
 							if(!$comfirmation){
             					$this->response->redirect($this->url->link('checkout/success'));
             				}else{
-            					echo 'success payment Complete' ;
+            					//echo 'success payment Complete' ;
+            					$this->response->addHeader('Content-Type: application/json');
+                    		   $this->response->setOutput(json_encode([
+                    		       "success" => true,
+                    		       "message" => 'confirm successfull'
+                    		       ])); 
             				}
 						}
 					}break;
@@ -623,7 +631,12 @@ class Epayco extends \Opencart\System\Engine\Controller
 						if(!$comfirmation){
         					$this->response->redirect($this->url->link('checkout/failure'));
         				}else{
-        					echo 'success payment Canceled' ;
+        					//echo 'success payment Canceled' ;
+        					$this->response->addHeader('Content-Type: application/json');
+		   $this->response->setOutput(json_encode([
+		       "success" => true,
+		       "message" => 'confirm successfull'
+		       ])); 
         				}
 					}break;
 					 case 3: case 7:{
@@ -633,7 +646,12 @@ class Epayco extends \Opencart\System\Engine\Controller
 						if(!$comfirmation){
         					$this->response->redirect($this->url->link('checkout/success'));
         				}else{
-        					echo 'success payment Pending' ;
+        					//echo 'success payment Pending' ;
+        					$this->response->addHeader('Content-Type: application/json');
+		   $this->response->setOutput(json_encode([
+		       "success" => true,
+		       "message" => 'confirm successfull'
+		       ])); 
         				}
 					}break;
 					default:{
@@ -641,7 +659,12 @@ class Epayco extends \Opencart\System\Engine\Controller
 						if(!$comfirmation){
         					$this->response->redirect($this->url->link('checkout/failure'));
         				}else{
-        					echo 'success payment Canceled' ;
+        				//	echo 'success payment Canceled' ;
+        					$this->response->addHeader('Content-Type: application/json');
+                		   $this->response->setOutput(json_encode([
+                		       "success" => true,
+                		       "message" => 'confirm successfull'
+                		       ])); 
         				}
 					}break;
 				}
@@ -650,7 +673,15 @@ class Epayco extends \Opencart\System\Engine\Controller
 			}
 		}else{
 		    //$this->model_checkout_order->addHistory($order_id, 10);
-			$this->response->redirect($this->url->link('checkout/failure'));
+		    if($comfirmation){
+		        $this->response->addHeader('Content-Type: application/json');
+    		   $this->response->setOutput(json_encode([
+    		       "success" => false,
+    		       "message" => 'failed confirmation'
+    		       ])); 
+		    }else{
+			    $this->response->redirect($this->url->link('checkout/failure'));
+		    }
 		}
 		if($comfirmation){
 		   $this->response->addHeader('Content-Type: application/json');
