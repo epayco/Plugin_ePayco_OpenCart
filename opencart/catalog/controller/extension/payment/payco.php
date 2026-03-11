@@ -599,6 +599,8 @@ class Epayco extends \Opencart\System\Engine\Controller
 			$data_p_amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
 	        
         $valid = (float)$x_amount == $data_p_amount;
+       // var_dump($x_signature==$signature,$x_cod_response,$valid,$orderStatus);
+        //die();
 			if($x_signature==$signature){
 				switch ((int)$x_cod_response) {
 					case 1:{

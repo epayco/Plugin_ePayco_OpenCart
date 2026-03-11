@@ -1,85 +1,99 @@
-<div class="d-inline-block pt-2 pd-2 w-100 text-end">
+<div class="text-end">
   <button type="button" id="button-confirm" class="btn btn-primary">{{ button_confirm }}</button>
 </div>
 <script type="text/javascript"
-        src="https://checkout.epayco.co/checkout.js">
+    src="https://checkout.epayco.co/checkout-green-v2.js">
 </script>
 <script type="text/javascript"><!--
 $('#button-confirm').on('click', function () {
-	var handler = ePayco.checkout.configure({
-      key: "{{ payment_epayco_public_key }}",
-      test: "{{ p_test_mode }}"
-    });
-    var extras_epayco = {
-        extra5: "P30"
-    }
     var element = this;
     var data={
         name: "{{ p_itemname }}",
         description: "{{ p_itemname }}",
         invoice: "{{ p_id_invoice }}",
         currency: "{{ p_currency_code }}",
-        amount: "{{ p_amount }}",
-        tax_base: "{{ p_amount_base }}",
-        tax: "{{ p_tax }}",
+        amount: {{ p_amount|json_encode|raw }},
+        taxBase: {{ p_amount_base|json_encode|raw }},
+        tax: {{ p_tax|json_encode|raw }},
         country: "{{ p_shiping_country }}",
         lang: "{{ p_lang }}",
-        external: "{{ p_payco_checkout_type }}",
-        extra1: "{{ extra1 }}",
+        extras: {
+            extra1: "{{ extra1 }}",
+        },
         confirmation: "{{ p_url_confirmation }}",
         response: "{{ p_url_response }}",
-        autoclick: "true",
         ip: "{{ ip }}",
-        test: "{{ p_test_mode }}",
-        extras_epayco: extras_epayco
+        test:{{ p_test_mode ? 'true' : 'false' }},
+        extrasEpayco: {
+            extra5:"P30"
+        },
+        checkout_version: "2",
     }
     const apiKey = "{{ payment_epayco_public_key }}";
     const privateKey = "{{ payment_epayco_private_key }}";
     var openChekout = function () {
-        if(localStorage.getItem("invoicePayment") == null){
-        localStorage.setItem("invoicePayment", data.invoice);
-            makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
-        }else{
-            if(localStorage.getItem("invoicePayment") != data.invoice){
-                localStorage.removeItem("invoicePayment");
-                localStorage.setItem("invoicePayment", data.invoice);
-                    makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
-            }else{
-                makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
-            }
-        }
+        makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
     }
+        // Obtiene y cachea el bearer token
+    const getBearerToken = (priv, pub) => {
+        const cacheKey = 'epaycoBearer';
+        const expKey = cacheKey + ':exp';
+        const cached = localStorage.getItem(cacheKey);
+        const exp = parseInt(localStorage.getItem(expKey) || '0', 10);
+        if (cached && Date.now() < exp) return Promise.resolve(cached);
+
+        return fetch("https://apify-green.epayco.co/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Basic " + btoa(`${pub}:${priv}`)
+            }
+        })
+        .then(r => r.json())
+        .then(json => {
+            const token = json.token || json.access_token;
+            if (!token) throw new Error("No se recibió token");
+            const ttlMs = (14 * 60 * 1000) - 15000;
+            localStorage.setItem(cacheKey, token);
+            localStorage.setItem(expKey, String(Date.now() + ttlMs));
+            return token;
+        });
+    };
+
     var makePayment = function (privatekey, apikey, info, external) {
-        const headers = { "Content-Type": "application/json" } ;
-        headers["privatekey"] = privatekey;
-        headers["apikey"] = apikey;
-        var payment =   function (){
-            return  fetch("https://cms.epayco.co/checkout/payment/session", {
+        const headers = { "Content-Type": "application/json" };
+        const payment = function () {
+            return fetch("https://apify-green.epayco.co/payment/session/create", {
                 method: "POST",
                 body: JSON.stringify(info),
                 headers
             })
-                .then(res =>  res.json())
-                .catch(err => err);
-        }
-        payment()
+            .then(res => res.json());
+        };
+        return getBearerToken(privatekey, apikey)
+            .then(token => {
+                headers["Authorization"] = "Bearer " + token;
+                return payment();
+            })
             .then(session => {
-                if(session.data.sessionId != undefined){
+                if (session.data && session.data.sessionId) {
                     localStorage.removeItem("sessionPayment");
                     localStorage.setItem("sessionPayment", session.data.sessionId);
                     const handlerNew = window.ePayco.checkout.configure({
                         sessionId: session.data.sessionId,
-                        external: external,
+                        type: "{{ p_payco_checkout_type }}",
+                        test: {{ p_test_mode|json_encode|raw }},
                     });
-                    handlerNew.openNew()
-                }else{
-                    handler.open(data)
+                    handlerNew.open();
+                } else {
+                    $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> No pudimos Procesar tu pago <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
                 }
             })
             .catch(error => {
-                error.message;
+                console.error(error);
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> Error autenticando o creando la sesión <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
             });
-    }    
+    } 
     $.ajax({
         url: 'index.php?route=extension/epayco/payment/epayco|confirm&language={{ language }}',
         dataType: 'json',

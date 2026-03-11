@@ -1,5 +1,10 @@
 <?php
 namespace Opencart\Admin\Controller\Extension\Epayco\Payment;
+/**
+ * Class Epayco
+ *
+ * @package Opencart\Admin\Controller\Extension\Epayco\Payment
+ */
 class Epayco extends \Opencart\System\Engine\Controller
 {
 	private $error = [];
@@ -19,7 +24,7 @@ class Epayco extends \Opencart\System\Engine\Controller
 
 		$data['breadcrumbs'][] = [
 			'text' => $this->language->get('text_extension'),
-			'href' => $this->url->link('marketplace/opencart/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment')
+			'href' => $this->url->link('marketplace/epayco/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment')
 		];
 
 		$data['breadcrumbs'][] = [
