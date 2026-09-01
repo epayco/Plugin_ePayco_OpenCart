@@ -92,7 +92,9 @@ class ControllerExtensionPaymentEpayco extends Controller {
 		$data['p_url_confirmation'] = $this->url->link($this->extension_base_path . '/callback', 'confirmation=1', true);
 		$data['p_url_response'] = $this->url->link($this->extension_base_path . '/callback', 'response=1', true);
 
-		$data['customer_email'] = $this->session->data['customer']['email'];
+		// El checkout de invitado no puebla session->data['customer'] (solo clientes
+		// logueados) - se resuelve el email igual que el core (checkout/confirm.php).
+		$data['customer_email'] = $this->getCustomerEmail();
 		$data['lang'] = $this->language->get('code');
 		// El release 4.2.0 original seteaba 'lang' pero el twig referenciaba
 		// 'language' (nunca asignado) - se corrige agregando ambos.
@@ -167,13 +169,37 @@ class ControllerExtensionPaymentEpayco extends Controller {
 				$order_data['store_id'] = $this->config->get('config_store_id');
 				$order_data['store_name'] = $this->config->get('config_name');
 				$order_data['store_url'] = $this->config->get('config_url');
-				$order_data['customer_id'] = $this->session->data['customer']['customer_id'];
-				$order_data['customer_group_id'] = $this->session->data['customer']['customer_group_id'];
-				$order_data['firstname'] = $this->session->data['customer']['firstname'];
-				$order_data['lastname'] = $this->session->data['customer']['lastname'];
-				$order_data['email'] = $this->session->data['customer']['email'];
-				$order_data['telephone'] = $this->session->data['customer']['telephone'];
-				$order_data['custom_field'] = isset($this->session->data['customer']['custom_field']) ? $this->session->data['customer']['custom_field'] : array();
+				// checkout/confirm.php del core resuelve cliente logueado vs invitado
+				// de la misma forma - session->data['customer'] no existe para invitados.
+				if ($this->customer->isLogged()) {
+					$this->load->model('account/customer');
+
+					$customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
+
+					$order_data['customer_id'] = $this->customer->getId();
+					$order_data['customer_group_id'] = $customer_info['customer_group_id'];
+					$order_data['firstname'] = $customer_info['firstname'];
+					$order_data['lastname'] = $customer_info['lastname'];
+					$order_data['email'] = $customer_info['email'];
+					$order_data['telephone'] = $customer_info['telephone'];
+					$order_data['custom_field'] = json_decode($customer_info['custom_field'], true);
+				} elseif (isset($this->session->data['guest'])) {
+					$order_data['customer_id'] = 0;
+					$order_data['customer_group_id'] = $this->session->data['guest']['customer_group_id'];
+					$order_data['firstname'] = $this->session->data['guest']['firstname'];
+					$order_data['lastname'] = $this->session->data['guest']['lastname'];
+					$order_data['email'] = $this->session->data['guest']['email'];
+					$order_data['telephone'] = $this->session->data['guest']['telephone'];
+					$order_data['custom_field'] = isset($this->session->data['guest']['custom_field']) ? $this->session->data['guest']['custom_field'] : array();
+				} else {
+					$order_data['customer_id'] = 0;
+					$order_data['customer_group_id'] = $this->config->get('config_customer_group_id');
+					$order_data['firstname'] = '';
+					$order_data['lastname'] = '';
+					$order_data['email'] = '';
+					$order_data['telephone'] = '';
+					$order_data['custom_field'] = array();
+				}
 
 				if (array_key_exists('payment_address', $this->session->data)) {
 					$order_data['payment_firstname'] = $this->session->data['payment_address']['firstname'];
@@ -470,6 +496,22 @@ class ControllerExtensionPaymentEpayco extends Controller {
 		$p_key = $this->config->get('payment_epayco_p_key');
 
 		return hash('sha256', trim($merchant_id) . '^' . trim($p_key) . '^' . $x_ref_payco . '^' . $x_transaction_id . '^' . $x_amount . '^' . $x_currency_code);
+	}
+
+	/**
+	 * Email del comprador, sea cliente logueado o invitado (checkout/confirm.php
+	 * del core resuelve este mismo caso de la misma forma).
+	 */
+	private function getCustomerEmail() {
+		if ($this->customer->isLogged()) {
+			return $this->customer->getEmail();
+		}
+
+		if (isset($this->session->data['guest']['email'])) {
+			return $this->session->data['guest']['email'];
+		}
+
+		return '';
 	}
 
 	public function getCustomerIp() {
