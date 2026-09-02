@@ -34,9 +34,12 @@ $('#button-confirm').on('click', function () {
     var openChekout = function () {
         makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
     }
-        // Obtiene y cachea el bearer token
+        // Obtiene y cachea el bearer token. La clave incluye la PUBLIC_KEY para
+        // que un cambio de credenciales en el admin no reuse un token viejo
+        // obtenido con una llave distinta (bug real: antes la clave era fija
+        // "epaycoBearer" sin importar qué credenciales lo generaron).
     const getBearerToken = (priv, pub) => {
-        const cacheKey = 'epaycoBearer';
+        const cacheKey = 'epaycoBearer:' + pub;
         const expKey = cacheKey + ':exp';
         const cached = localStorage.getItem(cacheKey);
         const exp = parseInt(localStorage.getItem(expKey) || '0', 10);
