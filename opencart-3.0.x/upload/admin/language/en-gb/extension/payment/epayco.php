@@ -9,6 +9,7 @@ $_['text_edit']           = 'Edit ePayco';
 $_['text_enabled']        = 'Enabled';
 $_['text_disabled']       = 'Disabled';
 $_['text_all_zones']      = 'All Zones';
+$_['text_epayco']         = '<a target="_BLANK" href="https://epayco.com/"><img src="https://epayco.com/wp-content/uploads/2025/12/new-logo.svg" alt="ePayco" title="ePayco" style="border: 1px solid #EEEEEE; max-height: 25px;" /></a>';
 
 // Entry
 $_['entry_order_status']  = 'Order Status';
